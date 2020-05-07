@@ -12,6 +12,7 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        setTitle("Sign in");
     }
 
     public void signIn(View view) {
