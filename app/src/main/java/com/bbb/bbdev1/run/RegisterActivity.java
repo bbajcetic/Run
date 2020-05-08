@@ -2,9 +2,11 @@ package com.bbb.bbdev1.run;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,7 +17,10 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -144,6 +149,26 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void changeDisplayPicture(View view) {
+        String dialogTitle = "Profile Picture Picker";
+        String[] dialogOptions = { "Take from camera", "Select from gallery" };
+        new AlertDialog.Builder(this).setTitle(dialogTitle).setItems(dialogOptions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) { //take from camera
+                    takePictureFromCamera();
+                    Toast.makeText(RegisterActivity.this, "Take from camera option selected", Toast.LENGTH_SHORT).show();
+                } else if (which == 1) { //select from gallery;
+                    selectPictureFromGallery();
+                    Toast.makeText(RegisterActivity.this, "Select from gallery option selected", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).show();
+    }
+
+    private void takePictureFromCamera() {
+
+    }
+    private void selectPictureFromGallery() {
 
     }
 }
