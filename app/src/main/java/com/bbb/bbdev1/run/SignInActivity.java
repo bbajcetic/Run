@@ -46,6 +46,7 @@ public class SignInActivity extends AppCompatActivity {
         if (pass_from_preferences != null && pass_from_preferences.equals(password)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
             Toast.makeText(this, "Sign in successful!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Email or password is incorrect!", Toast.LENGTH_SHORT).show();
