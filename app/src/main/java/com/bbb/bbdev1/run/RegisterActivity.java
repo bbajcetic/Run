@@ -22,6 +22,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     TextInputEditText emailField;
     TextInputEditText passwordField;
+    TextInputEditText nameField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.email_field);
         passwordField = findViewById(R.id.password_field);
+        nameField = findViewById(R.id.name_field);
+        //set focus to first EditText view
+        nameField.requestFocus();
 
         mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
 

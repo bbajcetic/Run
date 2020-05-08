@@ -2,10 +2,10 @@ package com.bbb.bbdev1.run;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,6 +27,8 @@ public class SignInActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.email_field);
         passwordField = findViewById(R.id.password_field);
+        //set focus to first EditText view
+        emailField.requestFocus();
 
         mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
 
