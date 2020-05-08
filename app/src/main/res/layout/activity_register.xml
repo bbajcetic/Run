@@ -23,122 +23,128 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/app_bar">
-
-        <!-- Display pic -->
+        app:layout_constraintTop_toBottomOf="@+id/app_bar"
+        app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-            <RelativeLayout
-                android:layout_width="0dp"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <!-- Display pic -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5">
-                <ImageView
-                    android:layout_width="135dp"
-                    android:layout_height="135dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_centerVertical="true"
-                    android:src="@mipmap/ic_launcher_round"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:padding="16dp">
-                <Button
-                    android:onClick="changeDisplayPicture"
-                    android:layout_width="wrap_content"
+                android:orientation="horizontal" >
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="Change"
-                    android:layout_centerVertical="true" />
-            </RelativeLayout>
+                    android:layout_weight="0.5">
+                    <ImageView
+                        android:layout_width="135dp"
+                        android:layout_height="135dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/ic_launcher_round"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:padding="16dp">
+                    <Button
+                        android:onClick="changeDisplayPicture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="Change"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- Name field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InformationFieldWithMargin">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name_field"
+                    android:hint="Name"
+                    style="@style/InformationField" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Gender radio buttons -->
+            <RadioGroup
+                android:id="@+id/gender_field"
+                android:orientation="horizontal"
+                style="@style/InformationFieldWithMargin" >
+                <RadioButton
+                    android:id="@+id/female"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="FEMALE"/>
+                <RadioButton
+                    android:id="@+id/male"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="MALE"/>
+            </RadioGroup>
+
+            <!-- Email field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InformationFieldWithMargin">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email_field"
+                    android:hint="Email"
+                    style="@style/InformationField"
+                    android:inputType="textEmailAddress"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Password field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InformationFieldWithMargin"
+                app:endIconMode="password_toggle">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password_field"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    style="@style/InformationField"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Phone number field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InformationFieldWithMargin">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/phone_field"
+                    android:hint="Phone"
+                    android:inputType="phone"
+                    style="@style/InformationField" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Major field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InformationFieldWithMargin">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/major_field"
+                    android:hint="Major"
+                    style="@style/InformationField" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Class field -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InformationFieldWithMargin">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/class_field"
+                    android:hint="Dartmouth Class"
+                    android:inputType="number"
+                    style="@style/InformationField" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
-
-        <!-- Name field -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InformationFieldWithMargin">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/name_field"
-                android:hint="Name"
-                style="@style/InformationField" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Gender radio buttons -->
-        <RadioGroup
-            android:id="@+id/gender_field"
-            android:orientation="horizontal"
-            style="@style/InformationFieldWithMargin" >
-            <RadioButton
-                android:id="@+id/female"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="FEMALE"/>
-            <RadioButton
-                android:id="@+id/male"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="MALE"/>
-        </RadioGroup>
-
-        <!-- Email field -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InformationFieldWithMargin">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/email_field"
-                android:hint="Email"
-                style="@style/InformationField"
-                android:inputType="textEmailAddress"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Password field -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InformationFieldWithMargin"
-            app:endIconMode="password_toggle">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_field"
-                android:hint="Password"
-                android:inputType="textPassword"
-                style="@style/InformationField"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Phone number field -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InformationFieldWithMargin">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/phone_field"
-                android:hint="Phone"
-                android:inputType="phone"
-                style="@style/InformationField" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Major field -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InformationFieldWithMargin">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/major_field"
-                android:hint="Major"
-                style="@style/InformationField" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Class field -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InformationFieldWithMargin">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/class_field"
-                android:hint="Dartmouth Class"
-                android:inputType="number"
-                style="@style/InformationField" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
