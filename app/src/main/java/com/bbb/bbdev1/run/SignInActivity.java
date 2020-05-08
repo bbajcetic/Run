@@ -26,12 +26,18 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signin);
         setTitle("Sign in");
 
+        mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
+
         emailField = findViewById(R.id.email_field);
         passwordField = findViewById(R.id.password_field);
         //set focus to first EditText view
         emailField.requestFocus();
 
-        mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
+        //restore state of email of password from before (if user typed anything)
+        String email_state = mPreferences.getString("EMAIL_STATE", "");
+        String password_state = mPreferences.getString("PASSWORD_STATE", "");
+        emailField.setText(email_state);
+        passwordField.setText(password_state);
 
         if (savedInstanceState != null) {
             emailField.setText(savedInstanceState.getString("EMAIL"));
@@ -45,6 +51,7 @@ public class SignInActivity extends AppCompatActivity {
                 Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
     @Override
@@ -91,6 +98,13 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
+        String email_state = emailField.getText().toString();
+        String password_state = passwordField.getText().toString();
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putString("EMAIL_STATE", email_state);
+        preferencesEditor.putString("PASSWORD_STATE", password_state);
+        preferencesEditor.apply();
+
         Intent registerIntent = new Intent(SignInActivity.this, RegisterActivity.class);
         startActivity(registerIntent);
     }
