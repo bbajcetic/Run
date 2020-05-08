@@ -5,11 +5,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,12 +26,21 @@ import android.widget.Toast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private SharedPreferences mPreferences;
     private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
+
+
+    final int PERMISSION_REQUEST_CAMERA = 1;
+    final int PERMISSION_REQUEST_READ_EXTERNAL = 2;
+    final int PERMISSION_REQUEST_REGISTER_BEGIN = 0;
+
+    final int GALLERY_REQUEST = 0;
+    final int CAMERA_REQUEST = 1;
 
     TextInputEditText nameField;
     RadioGroup genderField;
@@ -67,6 +82,8 @@ public class RegisterActivity extends AppCompatActivity {
             majorField.setText(savedInstanceState.getString("MAJOR"));
             classField.setText(savedInstanceState.getString("CLASS"));
         }
+
+        requestPermissionsBeforeRegister();
     }
 
     @Override
@@ -155,20 +172,87 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) { //take from camera
-                    takePictureFromCamera();
-                    Toast.makeText(RegisterActivity.this, "Take from camera option selected", Toast.LENGTH_SHORT).show();
+                    requestCameraPermissions();
                 } else if (which == 1) { //select from gallery;
-                    selectPictureFromGallery();
-                    Toast.makeText(RegisterActivity.this, "Select from gallery option selected", Toast.LENGTH_SHORT).show();
+                    requestGalleryPermissions();
                 }
             }
         }).show();
     }
 
-    private void takePictureFromCamera() {
-
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        }
     }
-    private void selectPictureFromGallery() {
+    private void startGalleryIntent() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(galleryIntent, GALLERY_REQUEST);
+        }
+    }
+    private void requestPermissionsBeforeRegister() {
+        ArrayList<String> permissions = new ArrayList<String>();
+        if (!isCameraEnabled()) {
+            permissions.add(Manifest.permission.CAMERA);
+        }
+        if (!isGalleryEnabled()) {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (permissions.size() > 0) {
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), PERMISSION_REQUEST_REGISTER_BEGIN);
+        }
+    }
+    private void requestCameraPermissions() {
+        if (!isCameraEnabled()) {
+            //explanation
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+        }
+        else {
+            startCameraIntent();
+        }
+    }
+    private void requestGalleryPermissions() {
+        if (!isGalleryEnabled()) {
+            //explanation
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_EXTERNAL);
+        }
+        else {
+            startGalleryIntent();
+        }
+    }
 
+    private boolean isCameraEnabled() {
+        return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
+    }
+    private boolean isGalleryEnabled() {
+        return (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode) {
+            case PERMISSION_REQUEST_CAMERA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Toast.makeText(this, "Camera request successful", Toast.LENGTH_SHORT).show();
+                    startCameraIntent();
+                } else {
+                    Toast.makeText(this, "Camera request unsuccessful", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case PERMISSION_REQUEST_READ_EXTERNAL:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Toast.makeText(this, "Read external memory request successful", Toast.LENGTH_SHORT).show();
+                    startGalleryIntent();
+                } else {
+                    Toast.makeText(this, "Read external memory request unsuccessful", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case PERMISSION_REQUEST_REGISTER_BEGIN:
+                //no action taken
+                break;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
