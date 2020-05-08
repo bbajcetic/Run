@@ -1,5 +1,6 @@
 package com.bbb.bbdev1.run;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -32,6 +33,11 @@ public class SignInActivity extends AppCompatActivity {
 
         mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
 
+        if (savedInstanceState != null) {
+            emailField.setText(savedInstanceState.getString("EMAIL"));
+            passwordField.setText(savedInstanceState.getString("PASSWORD"));
+        }
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String response = extras.getString("REGISTRATION_MESSAGE");
@@ -39,6 +45,13 @@ public class SignInActivity extends AppCompatActivity {
                 Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("EMAIL", emailField.getText().toString());
+        outState.putString("PASSWORD", passwordField.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 
     public void signIn(View view) {

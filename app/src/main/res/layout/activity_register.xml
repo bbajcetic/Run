@@ -52,6 +52,7 @@
                 android:layout_weight="0.5"
                 android:padding="16dp">
                 <Button
+                    android:onClick="changeDisplayPicture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -75,11 +76,13 @@
             android:orientation="horizontal"
             style="@style/InformationFieldWithMargin" >
             <RadioButton
+                android:id="@+id/female"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:text="FEMALE"/>
             <RadioButton
+                android:id="@+id/male"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"

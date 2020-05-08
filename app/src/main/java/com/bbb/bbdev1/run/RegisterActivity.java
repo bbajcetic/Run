@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -21,10 +22,13 @@ public class RegisterActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
 
-    TextInputEditText emailField;
-    TextInputEditText passwordField;
     TextInputEditText nameField;
     RadioGroup genderField;
+    TextInputEditText emailField;
+    TextInputEditText passwordField;
+    TextInputEditText phoneField;
+    TextInputEditText majorField;
+    TextInputEditText classField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +41,27 @@ public class RegisterActivity extends AppCompatActivity {
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        genderField = findViewById(R.id.gender_field);
-        emailField = findViewById(R.id.email_field);
-        passwordField = findViewById(R.id.password_field);
         nameField = findViewById(R.id.name_field);
         //set focus to first EditText view
         nameField.requestFocus();
+        genderField = findViewById(R.id.gender_field);
+        emailField = findViewById(R.id.email_field);
+        passwordField = findViewById(R.id.password_field);
+        phoneField = findViewById(R.id.phone_field);
+        majorField = findViewById(R.id.major_field);
+        classField = findViewById(R.id.class_field);
+
 
         mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
 
+        if (savedInstanceState != null) {
+            nameField.setText(savedInstanceState.getString("NAME"));
+            emailField.setText(savedInstanceState.getString("EMAIL"));
+            passwordField.setText(savedInstanceState.getString("PASSWORD"));
+            phoneField.setText(savedInstanceState.getString("PHONE"));
+            majorField.setText(savedInstanceState.getString("MAJOR"));
+            classField.setText(savedInstanceState.getString("CLASS"));
+        }
     }
 
     @Override
@@ -116,4 +132,18 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("NAME", nameField.getText().toString());
+        outState.putString("EMAIL", emailField.getText().toString());
+        outState.putString("PASSWORD", passwordField.getText().toString());
+        outState.putString("PHONE", phoneField.getText().toString());
+        outState.putString("MAJOR", majorField.getText().toString());
+        outState.putString("CLASS", classField.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    public void changeDisplayPicture(View view) {
+
+    }
 }
