@@ -8,4 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="InformationField">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="InformationFieldWithMargin" parent="InformationField">
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
+
 </resources>
