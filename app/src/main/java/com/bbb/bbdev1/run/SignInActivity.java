@@ -42,28 +42,32 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void signIn(View view) {
-        String email = emailField.getText().toString();
-        String password = passwordField.getText().toString();
-        boolean isError = false;
+        String email_field = emailField.getText().toString();
+        String password_field = passwordField.getText().toString();
 
-        if (email.isEmpty()) {
+        // Check for input errors
+        boolean isError = false;
+        if (email_field.isEmpty()) {
             emailField.setError("This field is required");
             isError = true;
-        } else if (!email.contains("@")) {
+        } else if (!email_field.contains("@")) {
             emailField.setError("This email address is invalid");
+            isError = true;
         }
-        if (password.isEmpty()) {
+        if (password_field.isEmpty()) {
             passwordField.setError("This field is required");
             isError = true;
-        } else if (password.length() < 6) {
+        } else if (password_field.length() < 6) {
             passwordField.setError("Password must be at least 6 characters");
+            isError = true;
         }
         if (isError) {
             return;
         }
 
-        String pass_from_preferences = mPreferences.getString(email, null);
-        if (pass_from_preferences != null && pass_from_preferences.equals(password)) {
+        // Check if email/password combination exists
+        String pass_from_preferences = mPreferences.getString(email_field, null);
+        if (pass_from_preferences != null && pass_from_preferences.equals(password_field)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();

@@ -71,6 +71,7 @@
 
         <!-- Gender radio buttons -->
         <RadioGroup
+            android:id="@+id/gender_field"
             android:orientation="horizontal"
             style="@style/InformationFieldWithMargin" >
             <RadioButton
