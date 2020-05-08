@@ -6,11 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
+
+    private SharedPreferences mPreferences;
+    private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
+
+    TextInputEditText emailField;
+    TextInputEditText passwordField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +34,11 @@ public class RegisterActivity extends AppCompatActivity {
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        emailField = findViewById(R.id.email_field);
+        passwordField = findViewById(R.id.password_field);
+
+        mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
+
     }
 
     @Override
@@ -34,10 +50,31 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_register) {
-            Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
-            startActivity(intent);
+            boolean success = saveProfile();
+            if (success) {
+                Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
+                intent.putExtra("REGISTRATION_MESSAGE", "Successfully registered!");
+                startActivity(intent);
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean saveProfile() {
+        String email_field = emailField.getText().toString();
+        String password_field = passwordField.getText().toString();
+
+        String isEmailThere = mPreferences.getString(email_field, null);
+        if (isEmailThere != null) {
+            Log.d("REGISTER_ACTIVITY", "Email already exists!");
+            Toast.makeText(this, "Registration failed (email already exists!)", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putString(email_field, password_field);
+        preferencesEditor.apply();
+        return true;
     }
 
 }
