@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -41,6 +42,23 @@ public class SignInActivity extends AppCompatActivity {
     public void signIn(View view) {
         String email = emailField.getText().toString();
         String password = passwordField.getText().toString();
+        boolean isError = false;
+
+        if (email.isEmpty()) {
+            emailField.setError("This field is required");
+            isError = true;
+        } else if (!email.contains("@")) {
+            emailField.setError("This email address is invalid");
+        }
+        if (password.isEmpty()) {
+            passwordField.setError("This field is required");
+            isError = true;
+        } else if (password.length() < 6) {
+            passwordField.setError("Password must be at least 6 characters");
+        }
+        if (isError) {
+            return;
+        }
 
         String pass_from_preferences = mPreferences.getString(email, null);
         if (pass_from_preferences != null && pass_from_preferences.equals(password)) {
