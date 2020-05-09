@@ -1,6 +1,7 @@
 package com.bbb.bbdev1.run;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,18 +15,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputEditText phoneField;
     TextInputEditText majorField;
     TextInputEditText classField;
+    ImageView displayPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         phoneField = findViewById(R.id.phone_field);
         majorField = findViewById(R.id.major_field);
         classField = findViewById(R.id.class_field);
+        displayPic = findViewById(R.id.display_pic);
 
 
         mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
@@ -178,6 +186,24 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         }).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap)extras.get("data");
+            displayPic.setImageBitmap(imageBitmap);
+        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            //Bitmap imageBitmap = (Bitmap)extras.get("data");
+            //displayPic.setImageBitmap(imageBitmap);
+            Uri image_uri = data.getData();
+            if (image_uri != null) {
+                displayPic.setImageURI(image_uri);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void startCameraIntent() {

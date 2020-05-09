@@ -45,6 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5">
                     <ImageView
+                        android:id="@+id/display_pic"
                         android:layout_width="135dp"
                         android:layout_height="135dp"
                         android:layout_marginLeft="16dp"
