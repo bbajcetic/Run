@@ -8,16 +8,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.graphics.PathUtils;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -27,10 +34,18 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+//crop library
+import com.soundcloud.android.crop.Crop;
+import com.soundcloud.android.crop.CropImageActivity;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +62,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     final int GALLERY_REQUEST = 0;
     final int CAMERA_REQUEST = 1;
+    final int CROP_REQUEST = 2;
+
+    Uri afterCropImage;
+    Uri beforeCropImage;
 
     TextInputEditText nameField;
     RadioGroup genderField;
@@ -191,29 +210,52 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap)extras.get("data");
-            displayPic.setImageBitmap(imageBitmap);
-        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            //Bitmap imageBitmap = (Bitmap)extras.get("data");
-            //displayPic.setImageBitmap(imageBitmap);
+            if (beforeCropImage != null) {
+                displayPic.setImageURI(beforeCropImage);
+            }
+            File file = new File(this.getFilesDir(), "camera_after_crop.jpg");
+            afterCropImage = FileProvider.getUriForFile(RegisterActivity.this,
+                    "com.bbb.bbdev1.run.provider", file);
+            Crop.of(beforeCropImage, afterCropImage).asSquare().start(this);
+        }
+        else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             Uri image_uri = data.getData();
             if (image_uri != null) {
                 displayPic.setImageURI(image_uri);
+            }
+            File file = new File(this.getFilesDir(), "gallery_after_crop.jpg");
+            afterCropImage = FileProvider.getUriForFile(RegisterActivity.this,
+                    "com.bbb.bbdev1.run.provider", file);
+            Crop.of(image_uri, afterCropImage).asSquare().start(this);
+        }
+        else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            if (afterCropImage != null) {
+                displayPic.setImageURI(afterCropImage);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void startCameraIntent() {
+        /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        }*/
+
+        File file = new File(this.getFilesDir(), "camera_picture.jpg");
+        beforeCropImage = FileProvider.getUriForFile(RegisterActivity.this,
+                this.getPackageName() + ".provider", file);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, beforeCropImage);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
         }
     }
     private void startGalleryIntent() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        //File file = new File(Environment.getExternalStorageDirectory(), "photo.png");
+        //beforeCropImage = FileProvider.getUriForFile(RegisterActivity.this, "com.bbb.bbdev1.run.provider")
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        galleryIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         if (galleryIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(galleryIntent, GALLERY_REQUEST);
         }
@@ -234,8 +276,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!isCameraEnabled()) {
             //explanation
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
-        }
-        else {
+        } else {
             startCameraIntent();
         }
     }
@@ -243,8 +284,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (!isGalleryEnabled()) {
             //explanation
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_EXTERNAL);
-        }
-        else {
+        } else {
             startGalleryIntent();
         }
     }
