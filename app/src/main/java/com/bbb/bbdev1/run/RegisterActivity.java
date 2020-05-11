@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,17 +37,10 @@ import android.widget.Toast;
 
 //crop library
 import com.soundcloud.android.crop.Crop;
-import com.soundcloud.android.crop.CropImageActivity;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +81,9 @@ public class RegisterActivity extends AppCompatActivity {
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        afterCropImage = null;
+        beforeCropImage = null;
+
         nameField = findViewById(R.id.name_field);
         //set focus to first EditText view
         nameField.requestFocus();
@@ -108,6 +105,10 @@ public class RegisterActivity extends AppCompatActivity {
             phoneField.setText(savedInstanceState.getString("PHONE"));
             majorField.setText(savedInstanceState.getString("MAJOR"));
             classField.setText(savedInstanceState.getString("CLASS"));
+            if (savedInstanceState.getParcelable("PICTURE_URI") != null) {
+                afterCropImage = savedInstanceState.getParcelable("PICTURE_URI");
+                displayPic.setImageURI(afterCropImage);
+            }
         }
 
         requestPermissionsBeforeRegister();
@@ -189,6 +190,9 @@ public class RegisterActivity extends AppCompatActivity {
         outState.putString("PHONE", phoneField.getText().toString());
         outState.putString("MAJOR", majorField.getText().toString());
         outState.putString("CLASS", classField.getText().toString());
+        if (afterCropImage != null) {
+            outState.putParcelable("PICTURE_URI", afterCropImage);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -246,6 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
         beforeCropImage = FileProvider.getUriForFile(RegisterActivity.this,
                 this.getPackageName() + ".provider", file);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, beforeCropImage);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
