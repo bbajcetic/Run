@@ -78,7 +78,8 @@ public class RegisterActivity extends AppCompatActivity {
     Uri afterCropUri;
     Uri beforeCropUri;
 
-    int toRotate;
+    int lastRotation;
+    int currentRotation;
 
     TextInputEditText nameField;
     RadioGroup genderField;
@@ -100,7 +101,8 @@ public class RegisterActivity extends AppCompatActivity {
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        toRotate = 0;
+        lastRotation = 0;
+        currentRotation = 0;
 
         afterCropUri = null;
         beforeCropUri = null;
@@ -129,9 +131,11 @@ public class RegisterActivity extends AppCompatActivity {
             phoneField.setText(savedInstanceState.getString("PHONE"));
             majorField.setText(savedInstanceState.getString("MAJOR"));
             classField.setText(savedInstanceState.getString("CLASS"));
+            currentRotation = savedInstanceState.getInt("ROTATION");
             if (savedInstanceState.getParcelable("AFTER_PICTURE_URI") != null) {
                 afterCropUri = savedInstanceState.getParcelable("AFTER_PICTURE_URI");
                 displayPic.setImageURI(afterCropUri);
+                displayPic.setRotation(currentRotation);
             }
             if (savedInstanceState.getParcelable("BEFORE_PICTURE_URI") != null) {
                 beforeCropUri = savedInstanceState.getParcelable("BEFORE_PICTURE_URI");
@@ -217,6 +221,7 @@ public class RegisterActivity extends AppCompatActivity {
         outState.putString("PHONE", phoneField.getText().toString());
         outState.putString("MAJOR", majorField.getText().toString());
         outState.putString("CLASS", classField.getText().toString());
+        outState.putInt("ROTATION", currentRotation);
         if (afterCropUri != null) {
             outState.putParcelable("AFTER_PICTURE_URI", afterCropUri);
         }
@@ -241,27 +246,29 @@ public class RegisterActivity extends AppCompatActivity {
         }).show();
     }
 
-    public void getOrientationFromFile(File path) {
+    public int getOrientationFromFile(File path) {
         try {
-            toRotate = 0;
+            int rotation = 0;
             Bitmap bitmap = BitmapFactory.decodeFile(path.getAbsolutePath());
             ExifInterface ei = new ExifInterface(path);
             int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
             switch(orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
-                    toRotate = 90;
+                    rotation = 90;
                     break;
                 case ExifInterface.ORIENTATION_ROTATE_180:
-                    toRotate = 180;
+                    rotation = 180;
                     break;
                 case ExifInterface.ORIENTATION_ROTATE_270:
-                    toRotate = 270;
+                    rotation = 270;
                     break;
                 case ExifInterface.ORIENTATION_NORMAL:
                     break;
             }
+            return rotation;
         } catch (IOException e) {
             e.printStackTrace();
+            return 0;
         }
     }
 
@@ -289,27 +296,13 @@ public class RegisterActivity extends AppCompatActivity {
             return null;
         }
     }
-    public void saveBitmapToFile(Bitmap bmp, Uri uri) {
-        OutputStream os = null;
-        try {
-            os = getApplicationContext().getContentResolver().openOutputStream(uri);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
-        try {
-            os.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             if (beforeCropUri == null || beforeCropFile == null) { return; }
 
-            getOrientationFromFile(beforeCropFile);
+            lastRotation = getOrientationFromFile(beforeCropFile);
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
@@ -321,7 +314,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             //transfer file at uri: image_uri to file: beforeCropFile and store Uri in beforeCropUri
             beforeCropUri = transferToInternalFile(image_uri, beforeCropFile);
-            getOrientationFromFile(beforeCropFile);
+            lastRotation = getOrientationFromFile(beforeCropFile);
 
             /*if (beforeCropUri != null) {
                 displayPic.setImageURI(beforeCropUri);
@@ -331,20 +324,13 @@ public class RegisterActivity extends AppCompatActivity {
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
         }
         else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            currentRotation = lastRotation;
             displayPic.setImageResource(0);
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), afterCropUri);
-                Bitmap bmp = rotateImage(bitmap, toRotate);
-                saveBitmapToFile(bmp, afterCropUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             if (afterCropUri != null) {
                 displayPic.setImageURI(afterCropUri);
+                displayPic.setRotation(currentRotation);
             }
-            toRotate = 0;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
