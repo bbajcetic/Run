@@ -309,7 +309,6 @@ public class RegisterActivity extends AppCompatActivity {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             if (beforeCropUri == null || beforeCropFile == null) { return; }
 
-            displayPic.setImageURI(beforeCropUri);
             getOrientationFromFile(beforeCropFile);
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
@@ -317,17 +316,22 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             Uri image_uri = data.getData();
-            if (image_uri == null) { return; }
+            if (image_uri == null) {
+                return; }
 
             //transfer file at uri: image_uri to file: beforeCropFile and store Uri in beforeCropUri
             beforeCropUri = transferToInternalFile(image_uri, beforeCropFile);
             getOrientationFromFile(beforeCropFile);
 
+            /*if (beforeCropUri != null) {
+                displayPic.setImageURI(beforeCropUri);
+            }*/
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
         }
         else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            displayPic.setImageResource(0);
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), afterCropUri);
