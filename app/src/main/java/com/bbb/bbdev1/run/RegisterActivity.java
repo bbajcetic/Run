@@ -71,6 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     final String BEFORE_CROP_FILE_NAME = "before_crop.jpg";
     final String AFTER_CROP_FINAL_NAME = "after_crop.jpg";
+    public static final String SIGN_IN_REPLY = "sign_in_reply";
 
     File beforeCropFile;
     File afterCropFile;
@@ -156,9 +157,13 @@ public class RegisterActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_register) {
             boolean success = saveProfile();
             if (success) {
-                Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
-                intent.putExtra("REGISTRATION_MESSAGE", "Successfully registered!");
-                startActivity(intent);
+                Intent replyIntent = new Intent();
+                replyIntent.putExtra(SIGN_IN_REPLY, "Successfully registered!");
+                setResult(RESULT_OK, replyIntent);
+                finish();
+                //Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
+                //intent.putExtra("REGISTRATION_MESSAGE", "Successfully registered!");
+                //startActivity(intent);
             }
             return true;
         }
