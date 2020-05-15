@@ -178,22 +178,33 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Check for input errors
         boolean isError = false;
+        if (password_field.isEmpty()) {
+            passwordField.setError("This field is required");
+            passwordField.requestFocus();
+            passwordField.setSelection(passwordField.getText().length());
+            isError = true;
+
+        } else if (password_field.length() < 6) {
+            passwordField.setError("Password must be at least 6 characters");
+            passwordField.requestFocus();
+            passwordField.setSelection(passwordField.getText().length());
+            isError = true;
+        }
         if (email_field.isEmpty()) {
             emailField.setError("This field is required");
+            emailField.requestFocus();
+            emailField.setSelection(emailField.getText().length());
             isError = true;
         } else if (!email_field.contains("@")) {
             emailField.setError("This email address is invalid");
-            isError = true;
-        }
-        if (password_field.isEmpty()) {
-            passwordField.setError("This field is required");
-            isError = true;
-        } else if (password_field.length() < 6) {
-            passwordField.setError("Password must be at least 6 characters");
+            emailField.requestFocus();
+            emailField.setSelection(emailField.getText().length());
             isError = true;
         }
         if (name_field.isEmpty()) {
             nameField.setError("This field is required");
+            nameField.requestFocus();
+            nameField.setSelection(nameField.getText().length());
             isError = true;
         }
         if (gender_field == -1) {
