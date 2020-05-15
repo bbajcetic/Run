@@ -60,6 +60,8 @@ public class RegisterActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
 
+    String emailState;
+    String passwordState;
 
     final int PERMISSION_REQUEST_CAMERA = 1;
     final int PERMISSION_REQUEST_READ_EXTERNAL = 2;
@@ -101,6 +103,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // save state of typed in email/password fields in signin activity
+        Intent intent = getIntent();
+        emailState = intent.getStringExtra("EMAIL_STATE");
+        passwordState = intent.getStringExtra("PASSWORD_STATE");
 
         lastRotation = 0;
         currentRotation = 0;
@@ -154,11 +161,17 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_register) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_register) {
             boolean success = saveProfile();
             if (success) {
                 Intent replyIntent = new Intent();
                 replyIntent.putExtra(SIGN_IN_REPLY, "Successfully registered!");
+                replyIntent.putExtra("EMAIL_STATE", emailState);
+                replyIntent.putExtra("PASSWORD_STATE", passwordState);
                 setResult(RESULT_OK, replyIntent);
                 finish();
                 //Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);

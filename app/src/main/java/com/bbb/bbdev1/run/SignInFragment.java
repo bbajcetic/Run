@@ -37,6 +37,9 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     private Button signInButton;
     private Button clearButton;
 
+    private String emailState;
+    private String passwordState;
+
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
@@ -107,13 +110,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         clearButton = root.findViewById(R.id.clear_button);
         clearButton.setOnClickListener(this);
 
-        //restore state of email of password from before (if user typed anything)
-        emailField.setText(mPreferences.getString("EMAIL_STATE", ""));
-        passwordField.setText(mPreferences.getString("PASSWORD_STATE", ""));
-        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.remove("EMAIL_STATE");
-        preferencesEditor.remove("PASSWORD_STATE");
-        preferencesEditor.apply();
+
         //restore state of email or password on configuration change
         if (savedInstanceState != null) {
             signin_status = 0; //this is because we don't want to send a response every config change
@@ -124,6 +121,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         //set focus to first EditText view
         emailField.requestFocus();
         emailField.setSelection(emailField.getText().length());
+
 
         // if loading just finished, take action and correctly respond to the sign in attempt
         if (signin_status == 1) {
@@ -137,13 +135,13 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
         try {
             outState.putString("EMAIL_STATE", emailField.getText().toString());
             outState.putString("PASSWORD_STATE", passwordField.getText().toString());
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        super.onSaveInstanceState(outState);
     }
 
     public void signIn(View view) throws InterruptedException {
@@ -186,7 +184,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         boolean signin_success =
                 (pass_from_preferences != null && pass_from_preferences.equals(password_field));
 
-        //save email and password
+        // save email and password state
         saveUIState();
 
         //start the loading to show the user the signin is in process
@@ -194,6 +192,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
 
     }
     public void signinResponse(boolean signin_success) {
+        loadUIState();
         if (signin_success) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
@@ -205,8 +204,9 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     }
 
     public void register(View view) {
-        saveUIState();
         Intent registerIntent = new Intent(getActivity(), RegisterActivity.class);
+        registerIntent.putExtra("EMAIL_STATE", emailField.getText().toString());
+        registerIntent.putExtra("PASSWORD_STATE", passwordField.getText().toString());
         startActivityForResult(registerIntent, REGISTER_REQUEST);
     }
 
@@ -225,11 +225,24 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         preferencesEditor.apply();
     }
 
+    public void loadUIState() {
+        emailField.setText(mPreferences.getString("EMAIL_STATE", ""));
+        passwordField.setText(mPreferences.getString("PASSWORD_STATE", ""));
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.remove("EMAIL_STATE");
+        preferencesEditor.remove("PASSWORD_STATE");
+        preferencesEditor.apply();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REGISTER_REQUEST && resultCode == RESULT_OK) {
             // show a Toast displaying information about the Registration attempt
             String reply = data.getStringExtra(RegisterActivity.SIGN_IN_REPLY);
+            emailState = data.getStringExtra("EMAIL_STATE");
+            passwordState = data.getStringExtra("PASSWORD_STATE");
+            emailField.setText(emailState);
+            passwordField.setText(passwordState);
             Toast.makeText(getActivity(), reply, Toast.LENGTH_SHORT).show();
             /*Bundle extras = getActivity().getIntent().getExtras();
             if (extras != null) {

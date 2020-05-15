@@ -19,16 +19,13 @@ import com.google.android.material.textfield.TextInputEditText;
 public class SignInActivity extends AppCompatActivity
         implements SignInFragment.OnSignInSelectedListener, LoadingFragment.OnLoadingCompleteListener {
 
-    boolean signin_success;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-        signin_success = false;
         if (savedInstanceState != null) {
-            signin_success = savedInstanceState.getBoolean("SIGNIN_SUCCESS");
             return;
         }
         if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
@@ -39,7 +36,6 @@ public class SignInActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("SIGNIN_SUCCESS", signin_success);
     }
 
     public void loadSignInFragment() {
@@ -52,12 +48,10 @@ public class SignInActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-
     @Override
     public void onSignInSelected(boolean signin_success) {
         //set signin status to use after loading
 
-        //this.signin_success = signin_success;
         int signin_status = signin_success ? 1 : 2;
 
         LoadingFragment loadingFragment = LoadingFragment.newInstance(signin_status);
@@ -71,7 +65,6 @@ public class SignInActivity extends AppCompatActivity
 
     @Override
     public void onLoadingComplete(int signin_status) {
-        //int signin_status = this.signin_success ? 1 : 2;
 
         SignInFragment signInFragment = SignInFragment.newInstance(signin_status);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -79,7 +72,5 @@ public class SignInActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, signInFragment);
         fragmentTransaction.commitAllowingStateLoss();
-
-        signin_success = false;
     }
 }
