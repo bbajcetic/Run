@@ -9,6 +9,6 @@
         <item>0</item>
         <item>1</item>
     </string-array>
-    <string name="settings_webpage">http://cs.dartmouth.edi/~campbell/cs65/cs65.html</string>
+    <string name="settings_webpage">http://cs.dartmouth.edu/~campbell/cs65/cs65.html</string>
 
 </resources>

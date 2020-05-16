@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Application Settings">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="Application Settings"
+        app:iconSpaceReserved="false">
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="privacy_preference"
+            android:key="privacy_setting"
             android:summary="Posting your records anonymously"
-            android:title="Privacy Setting" />
+            android:title="Privacy Setting"
+            app:iconSpaceReserved="false"/>
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/settings_unit_preference"
             android:entryValues="@array/settings_unit_preference_values"
-            android:key="unit_preference"
+            android:key="unit_setting"
             android:summary="Select the units"
-            android:title="Unit Preference" />
+            android:title="Unit Preference"
+            app:iconSpaceReserved="false" />
         <Preference
             android:title="Webpage"
-            android:summary="@string/settings_webpage" />
+            android:key="webpage_setting"
+            android:summary="@string/settings_webpage"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Account Settings">
+    <PreferenceCategory android:title="Account Settings"
+        app:iconSpaceReserved="false">
         <Preference
-            android:title="Sign Out" />
+            android:title="Sign Out"
+            android:key="sign_out_setting"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 </PreferenceScreen>
