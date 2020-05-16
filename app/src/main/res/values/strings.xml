@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">Run</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="settings_unit_preference">
+        <item>Metric (Kilometers)</item>
+        <item>Imperial (Miles)</item>
+    </string-array>
+    <string-array name="settings_unit_preference_values">
+        <item>K</item>
+        <item>M</item>
+    </string-array>
+    <string name="settings_webpage">http://cs.dartmouth.edi/~campbell/cs65/cs65.html</string>
 
 </resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Application Settings">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_preference_1"
+            android:summary="Posting your records anonymously"
+            android:title="Privacy Setting" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/settings_unit_preference"
+            android:entryValues="@array/settings_unit_preference_values"
+            android:key="list_preference_1"
+            android:summary="Select the units"
+            android:title="Unit Preference" />
+        <Preference
+            android:title="Webpage"
+            android:summary="@string/settings_webpage" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Account Settings">
+        <Preference
+            android:title="Sign Out" />
+    </PreferenceCategory>
+</PreferenceScreen>

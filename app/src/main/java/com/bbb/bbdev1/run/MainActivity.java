@@ -59,6 +59,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                Toast.makeText(MainActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_edit_profile:
+                Toast.makeText(MainActivity.this, "Edit Profile selected", Toast.LENGTH_SHORT).show();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
