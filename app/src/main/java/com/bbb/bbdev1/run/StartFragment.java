@@ -7,17 +7,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+public class StartFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StartFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class StartFragment extends Fragment {
+    Spinner inputSpinner;
+    Spinner activitySpinner;
 
     public StartFragment() {
         // Required empty public constructor
@@ -51,8 +52,37 @@ public class StartFragment extends Fragment {
             }
         });
 
+        inputSpinner = root.findViewById(R.id.input_spinner);
+        inputSpinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> inputAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.input_type_options, android.R.layout.simple_spinner_dropdown_item);
+        inputSpinner.setAdapter(inputAdapter);
+
+        activitySpinner = root.findViewById(R.id.activity_spinner);
+        activitySpinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> activityAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.activity_type_options, android.R.layout.simple_spinner_dropdown_item);
+        activitySpinner.setAdapter(activityAdapter);
 
 
         return root;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch(parent.getId()) {
+            case R.id.input_spinner:
+                String input = parent.getItemAtPosition(position).toString();
+                Toast.makeText(getActivity(), "Input: " + input, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.activity_spinner:
+                String activity = parent.getItemAtPosition(position).toString();
+                Toast.makeText(getActivity(), "Activity: " + activity, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
