@@ -4,14 +4,14 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="switch_preference_1"
+            android:key="privacy_preference"
             android:summary="Posting your records anonymously"
             android:title="Privacy Setting" />
         <ListPreference
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:entries="@array/settings_unit_preference"
             android:entryValues="@array/settings_unit_preference_values"
-            android:key="list_preference_1"
+            android:key="unit_preference"
             android:summary="Select the units"
             android:title="Unit Preference" />
         <Preference

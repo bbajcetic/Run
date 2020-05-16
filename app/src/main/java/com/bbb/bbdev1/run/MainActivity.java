@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +26,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     BottomNavigationView navigationView;
     ViewPager pager;
     TabsFragmentPagerAdapter adapter;
+
+    Boolean privacyPref;
+    String unitPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (savedInstanceState == null) {
             navigationView.setSelectedItemId(R.id.tab_start);
         }
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        privacyPref = sharedPref.getBoolean(SettingsActivity.PRIVACY_PREF_KEY, false);
+        unitPref = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "");
+
 
     }
 
