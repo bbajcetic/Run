@@ -29,7 +29,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -159,12 +161,25 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
 
-        if (existingUser && savedInstanceState == null) {
-            //Edit Profile screen populate fields with saved user data
-            String uriString = mPreferences.getString(session_email + DISPLAY_PIC_SAVE_KEY, null);
-            if (uriString != null) {
-                afterCropUri = Uri.parse(uriString);
-                displayPic.setImageURI(afterCropUri);
+        if (existingUser) {
+            // just opened Edit Profile screen or configuration change
+            emailField.setText(session_email);
+            emailField.setInputType(InputType.TYPE_NULL);
+            emailField.setTextIsSelectable(false);
+            emailField.setEnabled(false);
+            emailField.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keycode, KeyEvent event) {
+                    return true;
+                }
+            });
+            if (savedInstanceState == null) { // just opened Edit Profile screen
+                //Edit Profile screen populate fields with saved user data
+                String uriString = mPreferences.getString(session_email + DISPLAY_PIC_SAVE_KEY, null);
+                if (uriString != null) {
+                    afterCropUri = Uri.parse(uriString);
+                    displayPic.setImageURI(afterCropUri);
+                }
             }
         }
 
