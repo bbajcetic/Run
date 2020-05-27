@@ -42,6 +42,8 @@ import com.soundcloud.android.crop.Crop;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -143,7 +145,6 @@ public class RegisterActivity extends AppCompatActivity {
             if (savedInstanceState.getParcelable("AFTER_PICTURE_URI") != null) {
                 afterCropUri = savedInstanceState.getParcelable("AFTER_PICTURE_URI");
                 displayPic.setImageURI(afterCropUri);
-                displayPic.setRotation(currentRotation);
             }
             if (savedInstanceState.getParcelable("BEFORE_PICTURE_URI") != null) {
                 beforeCropUri = savedInstanceState.getParcelable("BEFORE_PICTURE_URI");
@@ -309,14 +310,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     public Uri transferToInternalFile(Uri uri, File file) {
         try {
-            InputStream in = getContentResolver().openInputStream(uri);
-            OutputStream outputStream = new FileOutputStream(file);
+            InputStream in = new BufferedInputStream(getContentResolver().openInputStream(uri));
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
             byte buffer[] = new byte[1024];
             int length = 0;
             while((length = in.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
+                out.write(buffer, 0, length);
             }
-            outputStream.close();
+            out.close();
             in.close();
             return FileProvider.getUriForFile(RegisterActivity.this,
                     getPackageName() + ".provider", file);
@@ -326,12 +327,27 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    public void rotateFile(Uri uri, File file, float rotation) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(rotation);
+            Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+            newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             if (beforeCropUri == null || beforeCropFile == null) { return; }
 
+            //beforeCropUri holds the uri of the File: beforeCropFile
             lastRotation = getOrientationFromFile(beforeCropFile);
+            rotateFile(beforeCropUri, beforeCropFile, lastRotation);
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
@@ -344,10 +360,8 @@ public class RegisterActivity extends AppCompatActivity {
             //transfer file at uri: image_uri to file: beforeCropFile and store Uri in beforeCropUri
             beforeCropUri = transferToInternalFile(image_uri, beforeCropFile);
             lastRotation = getOrientationFromFile(beforeCropFile);
+            rotateFile(beforeCropUri, beforeCropFile, lastRotation);
 
-            /*if (beforeCropUri != null) {
-                displayPic.setImageURI(beforeCropUri);
-            }*/
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
@@ -358,18 +372,12 @@ public class RegisterActivity extends AppCompatActivity {
 
             if (afterCropUri != null) {
                 displayPic.setImageURI(afterCropUri);
-                displayPic.setRotation(currentRotation);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void startCameraIntent() {
-        /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-        }*/
-
         beforeCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                 this.getPackageName() + ".provider", beforeCropFile);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
