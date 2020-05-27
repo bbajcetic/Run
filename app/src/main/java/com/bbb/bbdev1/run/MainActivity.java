@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     Boolean privacyPref;
     String unitPref;
 
+    String session_email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         if (savedInstanceState == null) {
             navigationView.setSelectedItemId(R.id.tab_start);
+            Intent intent = getIntent();
+            session_email = intent.getStringExtra("SESSION_EMAIL");
+        } else {
+            session_email = savedInstanceState.getString("SESSION_EMAIL");
         }
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -78,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Toast.makeText(MainActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_edit_profile:
+                Intent profileIntent = new Intent(MainActivity.this, RegisterActivity.class);
+                profileIntent.putExtra("EXISTING_USER", true);
+                profileIntent.putExtra("SESSION_EMAIL", session_email);
+                startActivity(profileIntent);
                 Toast.makeText(MainActivity.this, "Edit Profile selected", Toast.LENGTH_SHORT).show();
                 return true;
         }
@@ -97,5 +107,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("SESSION_EMAIL", session_email);
+        super.onSaveInstanceState(outState);
     }
 }

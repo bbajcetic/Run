@@ -195,6 +195,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         loadUIState();
         if (signin_success) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("SESSION_EMAIL", emailField.getText().toString());
             startActivity(intent);
             getActivity().finish();
             Toast.makeText(getActivity(), "Sign in successful!", Toast.LENGTH_SHORT).show();
@@ -207,6 +208,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         Intent registerIntent = new Intent(getActivity(), RegisterActivity.class);
         registerIntent.putExtra("EMAIL_STATE", emailField.getText().toString());
         registerIntent.putExtra("PASSWORD_STATE", passwordField.getText().toString());
+        registerIntent.putExtra("EXISTING_USER", false);
         startActivityForResult(registerIntent, REGISTER_REQUEST);
     }
 

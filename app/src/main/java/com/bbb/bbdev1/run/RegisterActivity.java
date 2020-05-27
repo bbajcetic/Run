@@ -62,6 +62,9 @@ public class RegisterActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
 
+    // Register screen or Edit Profile screen
+    boolean existingUser;
+
     String emailState;
     String passwordState;
 
@@ -74,17 +77,16 @@ public class RegisterActivity extends AppCompatActivity {
     final int CROP_REQUEST = 2;
 
     final String BEFORE_CROP_FILE_NAME = "before_crop.jpg";
-    final String AFTER_CROP_FINAL_NAME = "after_crop.jpg";
+    final String AFTER_CROP_FILE_NAME = "after_crop.jpg";
+    final String SAVED_FILE_NAME = "_display_pic.jpg";
     public static final String SIGN_IN_REPLY = "sign_in_reply";
+    public static final String DISPLAY_PIC_SAVE_KEY = "_display_pic";
 
     File beforeCropFile;
     File afterCropFile;
 
     Uri afterCropUri;
     Uri beforeCropUri;
-
-    int lastRotation;
-    int currentRotation;
 
     TextInputEditText nameField;
     RadioGroup genderField;
@@ -94,6 +96,9 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputEditText majorField;
     TextInputEditText classField;
     ImageView displayPic;
+
+    // for the Edit Profile screen
+    String session_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,16 +113,15 @@ public class RegisterActivity extends AppCompatActivity {
 
         // save state of typed in email/password fields in signin activity
         Intent intent = getIntent();
-        emailState = intent.getStringExtra("EMAIL_STATE");
-        passwordState = intent.getStringExtra("PASSWORD_STATE");
-
-        lastRotation = 0;
-        currentRotation = 0;
+        // existingUser = true : Registering    |   existingUser = false : Edit Profile
+        existingUser = intent.getBooleanExtra("EXISTING_USER", false);
+        session_email = intent.getStringExtra("SESSION_EMAIL");
+        setTitle(existingUser ? "Profile" : "Register");
 
         afterCropUri = null;
         beforeCropUri = null;
 
-        afterCropFile = new File(this.getFilesDir(), AFTER_CROP_FINAL_NAME);
+        afterCropFile = new File(this.getFilesDir(), AFTER_CROP_FILE_NAME);
         beforeCropFile = new File(this.getFilesDir(), BEFORE_CROP_FILE_NAME);
 
         nameField = findViewById(R.id.name_field);
@@ -134,14 +138,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
 
+        emailState = intent.getStringExtra("EMAIL_STATE");
+        passwordState = intent.getStringExtra("PASSWORD_STATE");
+
         if (savedInstanceState != null) {
+            existingUser = savedInstanceState.getBoolean("EXISTING_USER");
+            session_email = savedInstanceState.getString("SESSION_EMAIL");
             nameField.setText(savedInstanceState.getString("NAME"));
             emailField.setText(savedInstanceState.getString("EMAIL"));
             passwordField.setText(savedInstanceState.getString("PASSWORD"));
             phoneField.setText(savedInstanceState.getString("PHONE"));
             majorField.setText(savedInstanceState.getString("MAJOR"));
             classField.setText(savedInstanceState.getString("CLASS"));
-            currentRotation = savedInstanceState.getInt("ROTATION");
             if (savedInstanceState.getParcelable("AFTER_PICTURE_URI") != null) {
                 afterCropUri = savedInstanceState.getParcelable("AFTER_PICTURE_URI");
                 displayPic.setImageURI(afterCropUri);
@@ -151,12 +159,25 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
 
+        if (existingUser && savedInstanceState == null) {
+            //Edit Profile screen populate fields with saved user data
+            String uriString = mPreferences.getString(session_email + DISPLAY_PIC_SAVE_KEY, null);
+            if (uriString != null) {
+                afterCropUri = Uri.parse(uriString);
+                displayPic.setImageURI(afterCropUri);
+            }
+        }
+
         requestPermissionsBeforeRegister();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_register, menu);
+        if (existingUser) {
+            getMenuInflater().inflate(R.menu.menu_profile, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_register, menu);
+        }
         return true;
     }
 
@@ -165,8 +186,15 @@ public class RegisterActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
-        }
-        else if (item.getItemId() == R.id.action_register) {
+        } else if (existingUser && item.getItemId() == R.id.action_save) {
+            boolean success = saveProfile();
+            if (success) {
+                Intent replyIntent = new Intent();
+                replyIntent.putExtra(SIGN_IN_REPLY, "Successfully saved!");
+                setResult(RESULT_OK, replyIntent);
+                finish();
+            }
+        } else if (!existingUser && item.getItemId() == R.id.action_register) {
             boolean success = saveProfile();
             if (success) {
                 Intent replyIntent = new Intent();
@@ -175,9 +203,6 @@ public class RegisterActivity extends AppCompatActivity {
                 replyIntent.putExtra("PASSWORD_STATE", passwordState);
                 setResult(RESULT_OK, replyIntent);
                 finish();
-                //Intent intent = new Intent(RegisterActivity.this, SignInActivity.class);
-                //intent.putExtra("REGISTRATION_MESSAGE", "Successfully registered!");
-                //startActivity(intent);
             }
             return true;
         }
@@ -239,19 +264,27 @@ public class RegisterActivity extends AppCompatActivity {
         // Save email/password combination
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putString(email_field, password_field);
+        if (afterCropUri != null) {
+            File displayPicFile = new File(this.getFilesDir(), email_field + SAVED_FILE_NAME);
+            //transfer file at uri: afterCropUri to file: displayPicFile and store Uri in savedUri
+            Uri savedUri = transferToInternalFile(afterCropUri, displayPicFile);
+            preferencesEditor.putString(email_field + DISPLAY_PIC_SAVE_KEY, savedUri.toString());
+            //if editing profile and changing email, delete last pic
+        }
         preferencesEditor.apply();
         return true;
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean("EXISTING_USER", existingUser);
+        outState.putString("SESSION_EMAIL", session_email);
         outState.putString("NAME", nameField.getText().toString());
         outState.putString("EMAIL", emailField.getText().toString());
         outState.putString("PASSWORD", passwordField.getText().toString());
         outState.putString("PHONE", phoneField.getText().toString());
         outState.putString("MAJOR", majorField.getText().toString());
         outState.putString("CLASS", classField.getText().toString());
-        outState.putInt("ROTATION", currentRotation);
         if (afterCropUri != null) {
             outState.putParcelable("AFTER_PICTURE_URI", afterCropUri);
         }
@@ -346,8 +379,8 @@ public class RegisterActivity extends AppCompatActivity {
             if (beforeCropUri == null || beforeCropFile == null) { return; }
 
             //beforeCropUri holds the uri of the File: beforeCropFile
-            lastRotation = getOrientationFromFile(beforeCropFile);
-            rotateFile(beforeCropUri, beforeCropFile, lastRotation);
+            float rotation = getOrientationFromFile(beforeCropFile);
+            rotateFile(beforeCropUri, beforeCropFile, rotation);
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
@@ -359,15 +392,14 @@ public class RegisterActivity extends AppCompatActivity {
 
             //transfer file at uri: image_uri to file: beforeCropFile and store Uri in beforeCropUri
             beforeCropUri = transferToInternalFile(image_uri, beforeCropFile);
-            lastRotation = getOrientationFromFile(beforeCropFile);
-            rotateFile(beforeCropUri, beforeCropFile, lastRotation);
+            float rotation = getOrientationFromFile(beforeCropFile);
+            rotateFile(beforeCropUri, beforeCropFile, rotation);
 
             afterCropUri = FileProvider.getUriForFile(RegisterActivity.this,
                     "com.bbb.bbdev1.run.provider", afterCropFile);
             Crop.of(beforeCropUri, afterCropUri).asSquare().start(this);
         }
         else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
-            currentRotation = lastRotation;
             displayPic.setImageResource(0);
 
             if (afterCropUri != null) {
