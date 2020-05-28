@@ -53,7 +53,7 @@ public class ManualEntryActivity extends AppCompatActivity implements RunDialogF
     }
     void showDialog() {
         DialogFragment newFragment = RunDialogFragment
-                .newInstance("Dialog Title");
+                .newInstance(1);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
