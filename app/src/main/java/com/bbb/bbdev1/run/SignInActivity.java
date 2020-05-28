@@ -42,8 +42,12 @@ public class SignInActivity extends AppCompatActivity
     }
 
     public void userSignIn(String email) {
+        // Set persistent session information
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putString("SESSION_EMAIL", email);
+        preferencesEditor.apply();
+
         Intent signinIntent = new Intent(this, MainActivity.class);
-        signinIntent.putExtra("SESSION_EMAIL", email);
         startActivity(signinIntent);
         finish();
     }

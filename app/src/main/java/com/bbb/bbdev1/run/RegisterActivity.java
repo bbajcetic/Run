@@ -124,7 +124,6 @@ public class RegisterActivity extends AppCompatActivity {
         Intent intent = getIntent();
         // existingUser = true : Registering    |   existingUser = false : Edit Profile
         existingUser = intent.getBooleanExtra("EXISTING_USER", false);
-        session_email = intent.getStringExtra("SESSION_EMAIL");
         setTitle(existingUser ? "Profile" : "Register");
 
         afterCropUri = null;
@@ -152,7 +151,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             existingUser = savedInstanceState.getBoolean("EXISTING_USER");
-            session_email = savedInstanceState.getString("SESSION_EMAIL");
             nameField.setText(savedInstanceState.getString("NAME"));
             emailField.setText(savedInstanceState.getString("EMAIL"));
             passwordField.setText(savedInstanceState.getString("PASSWORD"));
@@ -181,13 +179,14 @@ public class RegisterActivity extends AppCompatActivity {
             });
             if (savedInstanceState == null) { // just opened Edit Profile screen
                 //Edit Profile screen populate fields with saved user data
-                emailField.setText(session_email);
+                String session_email = mPreferences.getString("SESSION_EMAIL", "");
                 String passwordStr = mPreferences.getString(session_email, "");
                 String nameStr = mPreferences.getString(session_email + KEY_NAME, "");
                 String phoneStr = mPreferences.getString(session_email + KEY_PHONE, "");
                 String majorStr = mPreferences.getString(session_email + KEY_MAJOR, "");
                 String classStr = mPreferences.getString(session_email + KEY_CLASS, "");
                 int gender = mPreferences.getInt(session_email + KEY_GENDER, -1);
+                emailField.setText(session_email);
                 passwordField.setText(passwordStr);
                 nameField.setText(nameStr);
                 phoneField.setText(phoneStr);
@@ -320,13 +319,14 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // Save email/password combination
+        String session_email = mPreferences.getString("SESSION_EMAIL", "");
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.putString(email_field, password_field);
-        preferencesEditor.putInt(email_field + KEY_GENDER, gender_field);
-        preferencesEditor.putString(email_field + KEY_NAME, name_field);
-        preferencesEditor.putString(email_field + KEY_PHONE, phoneField.getText().toString());
-        preferencesEditor.putString(email_field + KEY_MAJOR, majorField.getText().toString());
-        preferencesEditor.putString(email_field + KEY_CLASS, classField.getText().toString());
+        preferencesEditor.putString(session_email, password_field);
+        preferencesEditor.putInt(session_email   + KEY_GENDER, gender_field);
+        preferencesEditor.putString(session_email + KEY_NAME, name_field);
+        preferencesEditor.putString(session_email + KEY_PHONE, phoneField.getText().toString());
+        preferencesEditor.putString(session_email + KEY_MAJOR, majorField.getText().toString());
+        preferencesEditor.putString(session_email + KEY_CLASS, classField.getText().toString());
 
         String uriString = mPreferences.getString(session_email + KEY_DISPLAY_PIC, null);
         Uri previousUri = (uriString == null) ? null : Uri.parse(uriString);
@@ -345,7 +345,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putBoolean("EXISTING_USER", existingUser);
-        outState.putString("SESSION_EMAIL", session_email);
         outState.putString("NAME", nameField.getText().toString());
         outState.putString("EMAIL", emailField.getText().toString());
         outState.putString("PASSWORD", passwordField.getText().toString());
