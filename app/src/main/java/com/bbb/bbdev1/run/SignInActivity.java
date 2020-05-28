@@ -19,18 +19,33 @@ import com.google.android.material.textfield.TextInputEditText;
 public class SignInActivity extends AppCompatActivity
         implements SignInFragment.OnSignInSelectedListener, LoadingFragment.OnLoadingCompleteListener {
 
+    private SharedPreferences mPreferences;
+    public static String PROFILES_FILE = "com.bbb.bbdev1.profiles";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
+        mPreferences = this.getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
+
+        String currentUser = mPreferences.getString("SESSION_EMAIL", null);
+
         if (savedInstanceState != null) {
             return;
+        } else if (currentUser != null) {//logged in) {
+            userSignIn(currentUser);
         }
-        if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
+        else if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
             loadSignInFragment();
         }
+    }
+
+    public void userSignIn(String email) {
+        Intent signinIntent = new Intent(this, MainActivity.class);
+        signinIntent.putExtra("SESSION_EMAIL", email);
+        startActivity(signinIntent);
+        finish();
     }
 
     @Override

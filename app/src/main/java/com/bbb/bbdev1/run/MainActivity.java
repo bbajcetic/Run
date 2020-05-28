@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private SharedPreferences mPreferences;
+
     final int EDIT_PROFILE_REQUEST = 1;
 
     BottomNavigationView navigationView;
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mPreferences = getSharedPreferences(SignInActivity.PROFILES_FILE, MODE_PRIVATE);
+
         navigationView = findViewById(R.id.navigation_main);
         navigationView.setOnNavigationItemSelectedListener((BottomNavigationView.OnNavigationItemSelectedListener) this);
 
@@ -56,9 +60,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
 
         if (savedInstanceState == null) {
-            navigationView.setSelectedItemId(R.id.tab_start);
+            // Get signed in user's email
             Intent intent = getIntent();
             session_email = intent.getStringExtra("SESSION_EMAIL");
+
+            // Set persistent session information
+            SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+            preferencesEditor.putString("SESSION_EMAIL", session_email);
+            preferencesEditor.apply();
+
+            // Default to Start tab
+            navigationView.setSelectedItemId(R.id.tab_start);
         } else {
             session_email = savedInstanceState.getString("SESSION_EMAIL");
         }
@@ -70,6 +82,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Toast.makeText(this, unitPref, Toast.LENGTH_SHORT).show();
 
 
+    }
+
+    public void signOut() {
+        // Remove persistent session information
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.remove("SESSION_EMAIL");
+        preferencesEditor.apply();
+
+        Intent signOutIntent = new Intent(this, SignInActivity.class);
+        startActivity(signOutIntent);
     }
 
     @Override
@@ -124,7 +146,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (requestCode == EDIT_PROFILE_REQUEST && resultCode == RESULT_OK) {
             // show a Toast displaying information about the Registration attempt
             String reply = data.getStringExtra(RegisterActivity.EDIT_PROFILE_REPLY);
+            boolean signout = data.getBooleanExtra("SIGNOUT", false);
             Toast.makeText(MainActivity.this, reply, Toast.LENGTH_SHORT).show();
+            if (signout) {
+                signOut();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

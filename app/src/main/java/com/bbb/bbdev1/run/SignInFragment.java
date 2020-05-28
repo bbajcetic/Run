@@ -28,7 +28,6 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     private OnSignInSelectedListener listener;
 
     private SharedPreferences mPreferences;
-    private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
     final int REGISTER_REQUEST = 1;
 
     private TextInputEditText emailField;
@@ -98,7 +97,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         Bundle args = getArguments();
         int signin_status = args.getInt("SIGNIN_STATUS");
 
-        mPreferences = getActivity().getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
+        mPreferences = getActivity().getSharedPreferences(SignInActivity.PROFILES_FILE, MODE_PRIVATE);
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_sign_in, container, false);
         emailField = root.findViewById(R.id.email_field);
@@ -194,10 +193,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     public void signinResponse(boolean signin_success) {
         loadUIState();
         if (signin_success) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("SESSION_EMAIL", emailField.getText().toString());
-            startActivity(intent);
-            getActivity().finish();
+            ((SignInActivity)getActivity()).userSignIn(emailField.getText().toString());
             Toast.makeText(getActivity(), "Sign in successful!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "Email or password is incorrect!", Toast.LENGTH_SHORT).show();

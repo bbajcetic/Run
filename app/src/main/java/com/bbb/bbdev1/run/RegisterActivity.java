@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.PathUtils;
+import androidx.core.util.Pair;
 
 import android.Manifest;
 import android.app.Activity;
@@ -62,7 +63,6 @@ import static java.security.AccessController.getContext;
 public class RegisterActivity extends AppCompatActivity {
 
     private SharedPreferences mPreferences;
-    private String PROFILES_FILE = "com.bbb.bbdev1.profiles";
 
     // Register screen or Edit Profile screen
     boolean existingUser;
@@ -145,7 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
         displayPic = findViewById(R.id.display_pic);
 
 
-        mPreferences = getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
+        mPreferences = getSharedPreferences(SignInActivity.PROFILES_FILE, MODE_PRIVATE);
 
         emailState = intent.getStringExtra("EMAIL_STATE");
         passwordState = intent.getStringExtra("PASSWORD_STATE");
@@ -223,18 +223,24 @@ public class RegisterActivity extends AppCompatActivity {
             onBackPressed();
             return true;
         } else if (existingUser && item.getItemId() == R.id.action_save) {
-            boolean success = saveProfile();
+            Pair<Boolean, Boolean> results = saveProfile();
+            boolean success = results.first;
+            boolean signout = results.second;
             if (success) {
                 Intent replyIntent = new Intent();
                 replyIntent.putExtra(EDIT_PROFILE_REPLY, "Successfully saved!");
+                replyIntent.putExtra("SIGNOUT", signout);
                 setResult(RESULT_OK, replyIntent);
                 finish();
             }
         } else if (!existingUser && item.getItemId() == R.id.action_register) {
-            boolean success = saveProfile();
+            Pair<Boolean, Boolean> results = saveProfile();
+            boolean success = results.first;
+            boolean signout = results.second;
             if (success) {
                 Intent replyIntent = new Intent();
                 replyIntent.putExtra(SIGN_IN_REPLY, "Successfully registered!");
+                replyIntent.putExtra("SIGNOUT", signout);
                 replyIntent.putExtra("EMAIL_STATE", emailState);
                 replyIntent.putExtra("PASSWORD_STATE", passwordState);
                 setResult(RESULT_OK, replyIntent);
@@ -245,7 +251,14 @@ public class RegisterActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean saveProfile() {
+    /**
+     * Either saves or registers a profile, depending on if the user is on the Register or Edit
+     * Profile screen
+     * @return A pair of 2 Booleans: (success, signout), where success indicates if the profile was
+     * saved or registered successfully, and signout indicates that the user needs to Sign Out
+     * because they changed their password
+     */
+    private Pair<Boolean, Boolean> saveProfile() {
         String email_field = emailField.getText().toString();
         String password_field = passwordField.getText().toString();
         String name_field = nameField.getText().toString();
@@ -287,14 +300,23 @@ public class RegisterActivity extends AppCompatActivity {
             isError = true;
         }
         if (isError) {
-            return false;
+            return Pair.create(false, false);
         }
 
         // Check for existing email
         if (!existingUser && mPreferences.getString(email_field, null) != null) {
             Log.d("REGISTER_ACTIVITY", "Email already exists!");
             Toast.makeText(this, "Registration failed (email already exists!)", Toast.LENGTH_SHORT).show();
-            return false;
+            return Pair.create(false, false);
+        }
+
+        boolean hasPasswordChanged = false;
+        //Check if password has changed in Edit Profile screen
+        if (existingUser) {
+            String oldPassword = mPreferences.getString(email_field, null);
+            if (!oldPassword.equals(password_field)) {
+                hasPasswordChanged = true;
+            }
         }
 
         // Save email/password combination
@@ -316,7 +338,8 @@ public class RegisterActivity extends AppCompatActivity {
             //if editing profile and changing email, delete last pic
         }
         preferencesEditor.apply();
-        return true;
+
+        return Pair.create(true, hasPasswordChanged);
     }
 
     @Override
