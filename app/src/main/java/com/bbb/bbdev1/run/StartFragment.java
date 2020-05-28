@@ -55,12 +55,13 @@ public class StartFragment extends Fragment implements AdapterView.OnItemSelecte
             public void onClick(View view) {
                 if (inputTypeSelected.equals("GPS") || inputTypeSelected.equals("Automatic")) {
                     Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+                    mapIntent.putExtra("ACTIVITY_TYPE", activityTypeSelected);
                     startActivity(mapIntent);
                 } else if (inputTypeSelected.equals("Manual")) {
                     Intent manualEntryIntent = new Intent(getActivity(), ManualEntryActivity.class);
+                    manualEntryIntent.putExtra("ACTIVITY_TYPE", activityTypeSelected);
                     startActivity(manualEntryIntent);
                 }
-                Toast.makeText(getActivity(), "Start clicked!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -96,11 +97,9 @@ public class StartFragment extends Fragment implements AdapterView.OnItemSelecte
         switch(parent.getId()) {
             case R.id.input_spinner:
                 inputTypeSelected = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getActivity(), "Input: " + inputTypeSelected, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity_spinner:
                 activityTypeSelected = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getActivity(), "Activity: " + activityTypeSelected, Toast.LENGTH_SHORT).show();
         }
     }
 
