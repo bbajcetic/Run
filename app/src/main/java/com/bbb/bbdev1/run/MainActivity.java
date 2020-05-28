@@ -1,6 +1,7 @@
 package com.bbb.bbdev1.run;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -22,6 +23,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    final int EDIT_PROFILE_REQUEST = 1;
 
     BottomNavigationView navigationView;
     ViewPager pager;
@@ -87,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Intent profileIntent = new Intent(MainActivity.this, RegisterActivity.class);
                 profileIntent.putExtra("EXISTING_USER", true);
                 profileIntent.putExtra("SESSION_EMAIL", session_email);
-                startActivity(profileIntent);
+                startActivityForResult(profileIntent, EDIT_PROFILE_REQUEST);
                 Toast.makeText(MainActivity.this, "Edit Profile selected", Toast.LENGTH_SHORT).show();
                 return true;
         }
@@ -113,5 +116,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("SESSION_EMAIL", session_email);
         super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == EDIT_PROFILE_REQUEST && resultCode == RESULT_OK) {
+            // show a Toast displaying information about the Registration attempt
+            String reply = data.getStringExtra(RegisterActivity.EDIT_PROFILE_REPLY);
+            Toast.makeText(MainActivity.this, reply, Toast.LENGTH_SHORT).show();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

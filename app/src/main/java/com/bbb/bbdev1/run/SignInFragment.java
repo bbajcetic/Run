@@ -246,13 +246,6 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
             emailField.setText(emailState);
             passwordField.setText(passwordState);
             Toast.makeText(getActivity(), reply, Toast.LENGTH_SHORT).show();
-            /*Bundle extras = getActivity().getIntent().getExtras();
-            if (extras != null) {
-                String response = extras.getString("REGISTRATION_MESSAGE");
-                if (response != null) {
-                    Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
-                }
-            }*/
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

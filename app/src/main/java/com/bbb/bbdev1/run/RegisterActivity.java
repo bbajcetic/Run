@@ -82,7 +82,14 @@ public class RegisterActivity extends AppCompatActivity {
     final String AFTER_CROP_FILE_NAME = "after_crop.jpg";
     final String SAVED_FILE_NAME = "_display_pic.jpg";
     public static final String SIGN_IN_REPLY = "sign_in_reply";
-    public static final String DISPLAY_PIC_SAVE_KEY = "_display_pic";
+    public static final String EDIT_PROFILE_REPLY = "edit_profile_reply";
+
+    public static final String KEY_DISPLAY_PIC = "_display_pic";
+    public static final String KEY_NAME = "_name";
+    public static final String KEY_GENDER = "_gender";
+    public static final String KEY_PHONE = "_phone";
+    public static final String KEY_MAJOR = "_major";
+    public static final String KEY_CLASS = "_class";
 
     File beforeCropFile;
     File afterCropFile;
@@ -162,8 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (existingUser) {
-            // just opened Edit Profile screen or configuration change
-            emailField.setText(session_email);
+            // enter Edit Profile screen or configuration change
             emailField.setInputType(InputType.TYPE_NULL);
             emailField.setTextIsSelectable(false);
             emailField.setEnabled(false);
@@ -175,7 +181,22 @@ public class RegisterActivity extends AppCompatActivity {
             });
             if (savedInstanceState == null) { // just opened Edit Profile screen
                 //Edit Profile screen populate fields with saved user data
-                String uriString = mPreferences.getString(session_email + DISPLAY_PIC_SAVE_KEY, null);
+                emailField.setText(session_email);
+                String passwordStr = mPreferences.getString(session_email, "");
+                String nameStr = mPreferences.getString(session_email + KEY_NAME, "");
+                String phoneStr = mPreferences.getString(session_email + KEY_PHONE, "");
+                String majorStr = mPreferences.getString(session_email + KEY_MAJOR, "");
+                String classStr = mPreferences.getString(session_email + KEY_CLASS, "");
+                int gender = mPreferences.getInt(session_email + KEY_GENDER, -1);
+                passwordField.setText(passwordStr);
+                nameField.setText(nameStr);
+                phoneField.setText(phoneStr);
+                majorField.setText(majorStr);
+                classField.setText(classStr);
+                genderField.check(gender);
+
+
+                String uriString = mPreferences.getString(session_email + KEY_DISPLAY_PIC, null);
                 if (uriString != null) {
                     afterCropUri = Uri.parse(uriString);
                     displayPic.setImageURI(afterCropUri);
@@ -205,7 +226,7 @@ public class RegisterActivity extends AppCompatActivity {
             boolean success = saveProfile();
             if (success) {
                 Intent replyIntent = new Intent();
-                replyIntent.putExtra(SIGN_IN_REPLY, "Successfully saved!");
+                replyIntent.putExtra(EDIT_PROFILE_REPLY, "Successfully saved!");
                 setResult(RESULT_OK, replyIntent);
                 finish();
             }
@@ -270,7 +291,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // Check for existing email
-        if (mPreferences.getString(email_field, null) != null) {
+        if (!existingUser && mPreferences.getString(email_field, null) != null) {
             Log.d("REGISTER_ACTIVITY", "Email already exists!");
             Toast.makeText(this, "Registration failed (email already exists!)", Toast.LENGTH_SHORT).show();
             return false;
@@ -279,11 +300,19 @@ public class RegisterActivity extends AppCompatActivity {
         // Save email/password combination
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putString(email_field, password_field);
-        if (afterCropUri != null) {
+        preferencesEditor.putInt(email_field + KEY_GENDER, gender_field);
+        preferencesEditor.putString(email_field + KEY_NAME, name_field);
+        preferencesEditor.putString(email_field + KEY_PHONE, phoneField.getText().toString());
+        preferencesEditor.putString(email_field + KEY_MAJOR, majorField.getText().toString());
+        preferencesEditor.putString(email_field + KEY_CLASS, classField.getText().toString());
+
+        String uriString = mPreferences.getString(session_email + KEY_DISPLAY_PIC, null);
+        Uri previousUri = (uriString == null) ? null : Uri.parse(uriString);
+        if (afterCropUri != null && !afterCropUri.equals(previousUri)) {
             File displayPicFile = new File(this.getFilesDir(), email_field + SAVED_FILE_NAME);
             //transfer file at uri: afterCropUri to file: displayPicFile and store Uri in savedUri
             Uri savedUri = transferToInternalFile(afterCropUri, displayPicFile);
-            preferencesEditor.putString(email_field + DISPLAY_PIC_SAVE_KEY, savedUri.toString());
+            preferencesEditor.putString(email_field + KEY_DISPLAY_PIC, savedUri.toString());
             //if editing profile and changing email, delete last pic
         }
         preferencesEditor.apply();
