@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private SharedPreferences mPreferences;
 
     final int EDIT_PROFILE_REQUEST = 1;
+    final int SETTINGS_REQUEST = 2;
 
     BottomNavigationView navigationView;
     ViewPager pager;
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch(item.getItemId()) {
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(settingsIntent);
+                startActivityForResult(settingsIntent, SETTINGS_REQUEST);
                 Toast.makeText(MainActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_edit_profile:
@@ -146,9 +147,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (requestCode == EDIT_PROFILE_REQUEST && resultCode == RESULT_OK) {
             // show a Toast displaying information about the Registration attempt
             String reply = data.getStringExtra(RegisterActivity.EDIT_PROFILE_REPLY);
-            boolean signout = data.getBooleanExtra("SIGNOUT", false);
+            boolean signOut = data.getBooleanExtra("SIGNOUT", false);
             Toast.makeText(MainActivity.this, reply, Toast.LENGTH_SHORT).show();
-            if (signout) {
+            if (signOut) {
+                signOut();
+            }
+        } else if (requestCode == SETTINGS_REQUEST && resultCode == RESULT_OK) {
+            boolean signOut = data.getBooleanExtra("SIGNOUT", false);
+            if (signOut) {
                 signOut();
             }
         }

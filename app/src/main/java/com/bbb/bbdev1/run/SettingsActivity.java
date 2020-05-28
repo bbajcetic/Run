@@ -3,6 +3,7 @@ package com.bbb.bbdev1.run;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -18,5 +19,12 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+    }
+
+    public void signOut() {
+        Intent signOutIntent = new Intent();
+        signOutIntent.putExtra("SIGNOUT", true);
+        setResult(RESULT_OK, signOutIntent);
+        finish();
     }
 }

@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static android.app.Activity.RESULT_OK;
+import static com.bbb.bbdev1.run.RegisterActivity.EDIT_PROFILE_REPLY;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     public SettingsFragment() {
@@ -34,7 +37,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         final Preference webpagePref = (Preference) findPreference(SettingsActivity.WEBPAGE_PREF_KEY);
-        Preference signOutPref = (Preference) findPreference(SettingsActivity.SIGN_OUT_PREF_KEY);
+        final Preference signOutPref = (Preference) findPreference(SettingsActivity.SIGN_OUT_PREF_KEY);
 
         webpagePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -56,7 +59,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         signOutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                //sign user out
+                ((SettingsActivity)getActivity()).signOut();
                 return true;
             }
         });
