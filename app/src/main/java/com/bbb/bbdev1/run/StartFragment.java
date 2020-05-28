@@ -1,7 +1,9 @@
 package com.bbb.bbdev1.run;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -19,6 +21,9 @@ public class StartFragment extends Fragment implements AdapterView.OnItemSelecte
 
     Spinner inputSpinner;
     Spinner activitySpinner;
+
+    String inputTypeSelected;
+    String activityTypeSelected;
 
     public StartFragment() {
         // Required empty public constructor
@@ -48,6 +53,13 @@ public class StartFragment extends Fragment implements AdapterView.OnItemSelecte
         startFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (inputTypeSelected.equals("GPS") || inputTypeSelected.equals("Automatic")) {
+                    Intent mapIntent = new Intent(getActivity(), MapActivity.class);
+                    startActivity(mapIntent);
+                } else if (inputTypeSelected.equals("Manual")) {
+                    Intent manualEntryIntent = new Intent(getActivity(), ManualEntryActivity.class);
+                    startActivity(manualEntryIntent);
+                }
                 Toast.makeText(getActivity(), "Start clicked!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -64,20 +76,31 @@ public class StartFragment extends Fragment implements AdapterView.OnItemSelecte
                 R.array.activity_type_options, android.R.layout.simple_spinner_dropdown_item);
         activitySpinner.setAdapter(activityAdapter);
 
+        if (savedInstanceState != null) {
+            inputTypeSelected = savedInstanceState.getString("INPUT_TYPE", "");
+            activityTypeSelected = savedInstanceState.getString("ACTIVITY_TYPE", "");
+        }
 
         return root;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("INPUT_TYPE", inputTypeSelected);
+        outState.putString("ACTIVITY_TYPE", activityTypeSelected);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch(parent.getId()) {
             case R.id.input_spinner:
-                String input = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getActivity(), "Input: " + input, Toast.LENGTH_SHORT).show();
+                inputTypeSelected = parent.getItemAtPosition(position).toString();
+                Toast.makeText(getActivity(), "Input: " + inputTypeSelected, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity_spinner:
-                String activity = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getActivity(), "Activity: " + activity, Toast.LENGTH_SHORT).show();
+                activityTypeSelected = parent.getItemAtPosition(position).toString();
+                Toast.makeText(getActivity(), "Activity: " + activityTypeSelected, Toast.LENGTH_SHORT).show();
         }
     }
 
