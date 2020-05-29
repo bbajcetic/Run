@@ -6,8 +6,8 @@
         <item>Imperial (Miles)</item>
     </string-array>
     <string-array name="settings_unit_preference_values">
-        <item>0</item>
-        <item>1</item>
+        <item>kms</item>
+        <item>mi</item>
     </string-array>
     <string name="settings_webpage">http://cs.dartmouth.edu/~campbell/cs65/cs65.html</string>
 

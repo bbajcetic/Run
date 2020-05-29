@@ -4,8 +4,10 @@ import com.bbb.bbdev1.run.RunDialogFragment.Type;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -27,6 +29,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     String calorie;
     String heartbeat;
     String comment;
+    String units;
 
     TextView activitySubtextView;
     TextView dateSubtextView;
@@ -60,11 +63,16 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.heartbeat).setOnClickListener(this);
         findViewById(R.id.comment).setOnClickListener(this);
 
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        units = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
+
         Intent intent = getIntent();
         activity = intent.getStringExtra("ACTIVITY_TYPE");
         initializeDateTime();
         duration = "0 mins";
-        distance = "0 kms";
+
+        distance = String.format("0 %s", units);
         calorie = "0 cals";
         heartbeat = "0 bpm";
         comment = "";
@@ -200,7 +208,6 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         outState.putString("CALORIE", calorie);
         outState.putString("HEARTBEAT", heartbeat);
         outState.putString("COMMENT", comment);
-
         super.onSaveInstanceState(outState);
     }
 }

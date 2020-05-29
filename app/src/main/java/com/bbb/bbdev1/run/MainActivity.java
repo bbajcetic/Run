@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         privacyPref = sharedPref.getBoolean(SettingsActivity.PRIVACY_PREF_KEY, false);
-        unitPref = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "");
+        unitPref = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
         Toast.makeText(this, unitPref, Toast.LENGTH_SHORT).show();
 
 

@@ -11,7 +11,7 @@
             android:title="Privacy Setting"
             app:iconSpaceReserved="false"/>
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="kms"
             android:entries="@array/settings_unit_preference"
             android:entryValues="@array/settings_unit_preference_values"
             android:key="unit_setting"
