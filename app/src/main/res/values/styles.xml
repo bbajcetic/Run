@@ -39,11 +39,17 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
-    <style name="ManualEntryTextViewTheme">
+    <style name="ManualTextTheme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+    <style name="ManualSubTextTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
     </style>
 </resources>
