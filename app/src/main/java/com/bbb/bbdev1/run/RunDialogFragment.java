@@ -11,11 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import android.text.InputType;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -55,6 +59,7 @@ public class RunDialogFragment extends DialogFragment {
                         listener.onDialogResponse(date);
                     }
                 }, year, month, day);
+
             case 2: //Time
                 final Calendar cTime = Calendar.getInstance();
                 int hour = cTime.get(Calendar.HOUR_OF_DAY);
@@ -66,18 +71,48 @@ public class RunDialogFragment extends DialogFragment {
                         listener.onDialogResponse(time);
                     }
                 }, hour, minute, DateFormat.is24HourFormat(getActivity()));
-            case 3: //Duration
-                break;
-            case 4: //Distance
-                break;
-            case 5: //Calorie
-                break;
-            case 6: //Heartbeat
-                break;
-            case 7: //Comment
-                break;
+
+            case 3: // Duration
+            case 4: // Distance
+            case 5: // Calorie
+            case 6: // Heartbeat
+            case 7: // Comment
+                View inflatedInputView = LayoutInflater.from(getContext()).inflate(R.layout.run_dialog_input, (ViewGroup) getView(), false);
+                View inflatedTitleView = LayoutInflater.from(getContext()).inflate(R.layout.run_dialog_title, (ViewGroup) getView(), false);
+                final EditText input = (EditText)inflatedInputView.findViewById(R.id.input);
+                if (dialogId == 3 || dialogId == 4) {
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                } else if (dialogId == 5 || dialogId == 6) {
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                } else if (dialogId == 7) {
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                }
+                final TextView title = (TextView)inflatedTitleView.findViewById(R.id.title);
+                if (dialogId == 3) {
+                    title.setText("Duration");
+                } else if (dialogId == 4) {
+                    title.setText("Distance");
+                } else if (dialogId == 5) {
+                    title.setText("Calorie");
+                } else if (dialogId == 6) {
+                    title.setText("Heartbeat");
+                } else if (dialogId == 7) {
+                    title.setText("Comment");
+                }
+                return new AlertDialog.Builder(getActivity())
+                        .setCustomTitle(inflatedTitleView)
+                        // .setTitle("Duration")
+                        .setView(inflatedInputView)
+                        .setPositiveButton("Ok",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String duration = input.getText().toString();
+                                        listener.onDialogResponse(duration);
+                                    }
+                                }).create();
         }
-        /*return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity())
                 .setIcon(R.drawable.ic_tab_start)
                 .setTitle("mytitle")
                 .setPositiveButton("OK",
@@ -93,7 +128,7 @@ public class RunDialogFragment extends DialogFragment {
                                                 int whichButton) {
                                 listener.onDialogResponse("cancel");
                             }
-                        }).create();*/
+                        }).create();
     }
 
     @Override

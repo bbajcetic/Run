@@ -31,4 +31,11 @@
     <style name="TextView.TextAboveSpinner" parent="TextAppearance.AppCompat.Caption">
         <item name="android:layout_marginBottom">0dp</item>
     </style>
+
+    <style name="DialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
 </resources>
