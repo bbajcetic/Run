@@ -29,16 +29,12 @@ public class ManualEntryActivity extends AppCompatActivity implements RunDialogF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
 
-        View tv = findViewById(R.id.text);
-        ((TextView) tv).setText("Example of displaying an alert dialog with a DialogFragment");
-        // Watch for button clicks.
-        Button button = findViewById(R.id.show);
-        button.setOnClickListener(new View.OnClickListener() {
+        TextView activity = findViewById(R.id.activity);
+        activity.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showDialog();
             }
         });
-
 
         if (savedInstanceState != null) {
             date = (Date) savedInstanceState.getSerializable("DATE");
