@@ -26,6 +26,7 @@ public class SignInActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        setTitle("Sign in");
 
         mPreferences = this.getSharedPreferences(PROFILES_FILE, MODE_PRIVATE);
 

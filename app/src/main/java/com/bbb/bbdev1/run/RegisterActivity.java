@@ -124,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
         Intent intent = getIntent();
         // existingUser = true : Registering    |   existingUser = false : Edit Profile
         existingUser = intent.getBooleanExtra("EXISTING_USER", false);
-        setTitle(existingUser ? "Profile" : "Register");
+        setTitle(existingUser ? "Profile" : "Sign up");
 
         afterCropUri = null;
         beforeCropUri = null;
