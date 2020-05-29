@@ -26,7 +26,36 @@ import java.util.Calendar;
 
 public class RunDialogFragment extends DialogFragment {
 
-    public String response;
+    public enum Type {
+        ACTIVITY,
+        DATE,
+        TIME,
+        DURATION,
+        DISTANCE,
+        CALORIE,
+        HEARTBEAT,
+        COMMENT;
+
+        public String getTitle() {
+            switch(this) {
+                case DATE:
+                    return "Date";
+                case TIME:
+                    return "Time";
+                case DURATION:
+                    return "Duration";
+                case DISTANCE:
+                    return "Distance";
+                case CALORIE:
+                    return "Calorie";
+                case HEARTBEAT:
+                    return "Heartbeat";
+                case COMMENT:
+                    return "Comment";
+            }
+            return "";
+        }
+    }
 
     OnDialogResponseListener listener;
 
@@ -34,19 +63,19 @@ public class RunDialogFragment extends DialogFragment {
         public void onDialogResponse(String response);
     }
 
-    public static RunDialogFragment newInstance(int dialogId) {
+    public static RunDialogFragment newInstance(Type type) {
         RunDialogFragment frag = new RunDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("dialogId", dialogId);
+        args.putSerializable("type", type);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        int dialogId = getArguments().getInt("dialogId");
-        switch (dialogId) {
-            case 1: // Date
+        Type type = (Type) getArguments().getSerializable("type");
+        switch (type) {
+            case DATE: // Date
                 final Calendar cDate = Calendar.getInstance();
                 int year = cDate.get(Calendar.YEAR);
                 int month = cDate.get(Calendar.MONTH);
@@ -60,7 +89,7 @@ public class RunDialogFragment extends DialogFragment {
                     }
                 }, year, month, day);
 
-            case 2: //Time
+            case TIME: //Time
                 final Calendar cTime = Calendar.getInstance();
                 int hour = cTime.get(Calendar.HOUR_OF_DAY);
                 int minute = cTime.get(Calendar.MINUTE);
@@ -72,33 +101,23 @@ public class RunDialogFragment extends DialogFragment {
                     }
                 }, hour, minute, DateFormat.is24HourFormat(getActivity()));
 
-            case 3: // Duration
-            case 4: // Distance
-            case 5: // Calorie
-            case 6: // Heartbeat
-            case 7: // Comment
+            case DURATION: // Duration
+            case DISTANCE: // Distance
+            case CALORIE: // Calorie
+            case HEARTBEAT: // Heartbeat
+            case COMMENT: // Comment
                 View inflatedInputView = LayoutInflater.from(getContext()).inflate(R.layout.run_dialog_input, (ViewGroup) getView(), false);
                 View inflatedTitleView = LayoutInflater.from(getContext()).inflate(R.layout.run_dialog_title, (ViewGroup) getView(), false);
                 final EditText input = (EditText)inflatedInputView.findViewById(R.id.input);
-                if (dialogId == 3 || dialogId == 4) {
+                if (type == Type.DURATION || type == Type.DISTANCE) {
                     input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                } else if (dialogId == 5 || dialogId == 6) {
+                } else if (type == Type.CALORIE || type == Type.HEARTBEAT) {
                     input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                } else if (dialogId == 7) {
+                } else if (type == Type.COMMENT) {
                     input.setInputType(InputType.TYPE_CLASS_TEXT);
                 }
                 final TextView title = (TextView)inflatedTitleView.findViewById(R.id.title);
-                if (dialogId == 3) {
-                    title.setText("Duration");
-                } else if (dialogId == 4) {
-                    title.setText("Distance");
-                } else if (dialogId == 5) {
-                    title.setText("Calorie");
-                } else if (dialogId == 6) {
-                    title.setText("Heartbeat");
-                } else if (dialogId == 7) {
-                    title.setText("Comment");
-                }
+                title.setText(type.getTitle());
                 return new AlertDialog.Builder(getActivity())
                         .setCustomTitle(inflatedTitleView)
                         // .setTitle("Duration")
@@ -112,23 +131,7 @@ public class RunDialogFragment extends DialogFragment {
                                     }
                                 }).create();
         }
-        return new AlertDialog.Builder(getActivity())
-                .setIcon(R.drawable.ic_tab_start)
-                .setTitle("mytitle")
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                listener.onDialogResponse("ok");
-                            }
-                        })
-                .setNegativeButton("CANCEL",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                listener.onDialogResponse("cancel");
-                            }
-                        }).create();
+        throw new AssertionError("Invalid Type given to DialogFragment");
     }
 
     @Override
