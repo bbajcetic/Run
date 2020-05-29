@@ -111,21 +111,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch(item.getItemId()) {
             case R.id.tab_start:
                 pager.setCurrentItem(0);
-                Toast.makeText(MainActivity.this, "On Start tab", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tab_history:
                 pager.setCurrentItem(1);
-                Toast.makeText(MainActivity.this, "On History tab", Toast.LENGTH_SHORT).show();
                 break;
         }
         return true;
     }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -145,4 +137,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+
 }

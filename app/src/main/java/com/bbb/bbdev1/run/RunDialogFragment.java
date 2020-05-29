@@ -60,7 +60,7 @@ public class RunDialogFragment extends DialogFragment {
     OnDialogResponseListener listener;
 
     public interface OnDialogResponseListener {
-        public void onDialogResponse(String response);
+        public void onDialogResponse(Type type, String response);
     }
 
     public static RunDialogFragment newInstance(Type type) {
@@ -73,9 +73,9 @@ public class RunDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Type type = (Type) getArguments().getSerializable("type");
+        final Type type = (Type) getArguments().getSerializable("type");
         switch (type) {
-            case DATE: // Date
+            case DATE:
                 final Calendar cDate = Calendar.getInstance();
                 int year = cDate.get(Calendar.YEAR);
                 int month = cDate.get(Calendar.MONTH);
@@ -84,28 +84,28 @@ public class RunDialogFragment extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         // Calendar months are 0 indexed, days and years are not
-                        String date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
-                        listener.onDialogResponse(date);
+                        String user_input = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                        listener.onDialogResponse(type, user_input);
                     }
                 }, year, month, day);
 
-            case TIME: //Time
+            case TIME:
                 final Calendar cTime = Calendar.getInstance();
                 int hour = cTime.get(Calendar.HOUR_OF_DAY);
                 int minute = cTime.get(Calendar.MINUTE);
                 return new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String time = String.format("%02d:%02d", hourOfDay, minute);
-                        listener.onDialogResponse(time);
+                        String user_input = String.format("%02d:%02d", hourOfDay, minute);
+                        listener.onDialogResponse(type, user_input);
                     }
                 }, hour, minute, DateFormat.is24HourFormat(getActivity()));
 
-            case DURATION: // Duration
-            case DISTANCE: // Distance
-            case CALORIE: // Calorie
-            case HEARTBEAT: // Heartbeat
-            case COMMENT: // Comment
+            case DURATION:
+            case DISTANCE:
+            case CALORIE:
+            case HEARTBEAT:
+            case COMMENT:
                 View inflatedInputView = LayoutInflater.from(getContext()).inflate(R.layout.run_dialog_input, (ViewGroup) getView(), false);
                 View inflatedTitleView = LayoutInflater.from(getContext()).inflate(R.layout.run_dialog_title, (ViewGroup) getView(), false);
                 final EditText input = (EditText)inflatedInputView.findViewById(R.id.input);
@@ -126,8 +126,8 @@ public class RunDialogFragment extends DialogFragment {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        String duration = input.getText().toString();
-                                        listener.onDialogResponse(duration);
+                                        String user_input = input.getText().toString();
+                                        listener.onDialogResponse(type, user_input);
                                     }
                                 }).create();
         }
