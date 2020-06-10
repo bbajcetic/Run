@@ -3,12 +3,15 @@ import com.bbb.bbdev1.run.RunDialogFragment.Type;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
@@ -20,6 +23,7 @@ import java.sql.Time;
 import java.util.Calendar;
 
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
+    final String TAG = "RUN_TAG";
 
     String activity;
     String date;
@@ -42,6 +46,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, String.format("%s onCreate() called", this.getClass().getName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
 
@@ -200,6 +205,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(TAG, String.format("%s onSaveInstanceState() called", this.getClass().getName()));
         outState.putString("ACTIVITY", activity);
         outState.putString("DATE", date);
         outState.putString("TIME", time);
@@ -209,5 +215,45 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         outState.putString("HEARTBEAT", heartbeat);
         outState.putString("COMMENT", comment);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, String.format("%s onStart() called", this.getClass().getName()));
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, String.format("%s onPause() called", this.getClass().getName()));
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, String.format("%s onResume() called", this.getClass().getName()));
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, String.format("%s onStop() called", this.getClass().getName()));
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, String.format("%s onDestroy() called", this.getClass().getName()));
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.d(TAG, String.format("%s onLowMemory() called", this.getClass().getName()));
     }
 }

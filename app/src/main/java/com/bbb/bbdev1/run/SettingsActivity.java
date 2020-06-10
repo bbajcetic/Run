@@ -1,10 +1,12 @@
 package com.bbb.bbdev1.run;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -27,4 +29,14 @@ public class SettingsActivity extends AppCompatActivity {
         setResult(RESULT_OK, signOutIntent);
         finish();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

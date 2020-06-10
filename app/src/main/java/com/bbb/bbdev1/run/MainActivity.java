@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+    final String TAG = "RUN_TAG";
 
     private SharedPreferences mPreferences;
 
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, String.format("%s onCreate() called", this.getClass().getName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -140,8 +143,38 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(TAG, String.format("%s onSaveInstanceState() called", this.getClass().getName()));
         super.onSaveInstanceState(outState);
     }
 
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, String.format("%s onStart() called", this.getClass().getName()));
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, String.format("%s onPause() called", this.getClass().getName()));
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, String.format("%s onResume() called", this.getClass().getName()));
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, String.format("%s onStop() called", this.getClass().getName()));
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, String.format("%s onDestroy() called", this.getClass().getName()));
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.d(TAG, String.format("%s onLowMemory() called", this.getClass().getName()));
+    }
 }
