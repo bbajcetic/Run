@@ -1,161 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ManualEntryActivity">
 
-    <LinearLayout
+    <!-- App bar containing "Save" option -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
-            android:id="@+id/activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:orientation="vertical">
-            <TextView
-                android:text="Activity"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/activity_info"
-                android:text="activity_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/activity"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Activity"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/activity_info"
+                    android:text="activity_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Date"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/date_info"
-                android:text="date_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/date"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Date"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/date_info"
+                    android:text="date_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Time"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/time_info"
-                android:text="time_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/time"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Time"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/time_info"
+                    android:text="time_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/duration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Duration"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/duration_info"
-                android:text="duration_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/duration"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Duration"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/duration_info"
+                    android:text="duration_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/distance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Distance"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/distance_info"
-                android:text="distance_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/distance"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Distance"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/distance_info"
+                    android:text="distance_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/calorie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Calorie"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/calorie_info"
-                android:text="calorie_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/calorie"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Calorie"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/calorie_info"
+                    android:text="calorie_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/heartbeat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Heartbeat"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/heartbeat_info"
-                android:text="heartbeat_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/heartbeat"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Heartbeat"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/heartbeat_info"
+                    android:text="heartbeat_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="Comment"
-                style="@style/ManualTextTheme"/>
-            <TextView
-                android:id="@+id/comment_info"
-                android:text="comment_info"
-                style="@style/ManualSubTextTheme"/>
-            <View
+            <LinearLayout
+                android:id="@+id/comment"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lightGray"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Comment"
+                    style="@style/ManualTextTheme"/>
+                <TextView
+                    android:id="@+id/comment_info"
+                    android:text="comment_info"
+                    style="@style/ManualSubTextTheme"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lightGray"/>
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

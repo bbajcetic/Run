@@ -3,6 +3,7 @@ import com.bbb.bbdev1.run.RunDialogFragment.Type;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -49,6 +51,12 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         Log.d(TAG, String.format("%s onCreate() called", this.getClass().getName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //enable Up navigation
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         activitySubtextView = findViewById(R.id.activity_info);
         dateSubtextView = findViewById(R.id.date_info);
@@ -218,10 +226,20 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_entry, menu);
+        return true;
+    }
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
+        int id = item.getItemId();
+        switch(id) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_save:
+                // add entry to database
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
