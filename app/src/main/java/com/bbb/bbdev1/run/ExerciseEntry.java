@@ -50,4 +50,9 @@ public class ExerciseEntry {
     public void setComment(String comment) { this.comment = comment; }
     public void setLocationList(ArrayList<LatLng> locationList) { this.locationList = locationList; }
 
+    @Override
+    public String toString() {
+        return "Exercise #" + id;
+    }
+
 }
