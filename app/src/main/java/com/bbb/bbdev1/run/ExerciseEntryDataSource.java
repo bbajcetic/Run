@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class ExerciseEntryDataSource {
     private SQLiteDatabase database;
     private MySQLiteOpenHelper dbHelper;
 
-    String[] columns = {
+    public static String[] columns = {
             COLUMN_ID,
             COLUMN_INPUT_TYPE,
             COLUMN_ACTIVITY_TYPE,
@@ -79,19 +80,10 @@ public class ExerciseEntryDataSource {
     }
     public List<ExerciseEntry> getAllExercises() {
         List<ExerciseEntry> exercises = new ArrayList<>();
-
-        Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_ENTRIES,
-                columns, null, null, null, null, null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            ExerciseEntry entry = getExerciseFromCursor(cursor);
-            exercises.add(entry);
-            cursor.moveToNext();
-        }
-        cursor.close();
+        new getAllAsyncTask(database, exercises).execute();
         return exercises;
     }
-    private ExerciseEntry getExerciseFromCursor(Cursor cursor) {
+    public static ExerciseEntry getExerciseFromCursor(Cursor cursor) {
         ExerciseEntry entry = new ExerciseEntry(
                 cursor.getLong(0),
                 cursor.getInt(1),
@@ -109,5 +101,30 @@ public class ExerciseEntryDataSource {
                 cursor.getString(13)
         );
         return entry;
+    }
+
+    private static class getAllAsyncTask extends AsyncTask<Void, Void, Void> {
+        private SQLiteDatabase database;
+        private List<ExerciseEntry> exercises;
+
+        getAllAsyncTask(SQLiteDatabase database, List<ExerciseEntry> exercises) {
+            this.database = database;
+            this.exercises = exercises;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_ENTRIES,
+                    ExerciseEntryDataSource.columns, null, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()) {
+                ExerciseEntry entry = ExerciseEntryDataSource.getExerciseFromCursor(cursor);
+                exercises.add(entry);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return null;
+        }
     }
 }
