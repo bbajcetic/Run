@@ -24,6 +24,8 @@ import java.util.Date;
 import java.sql.Time;
 import java.util.Calendar;
 
+import static com.bbb.bbdev1.run.RunDialogFragment.Type.*;
+
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
     final String TAG = "RUN_TAG";
 
@@ -58,38 +60,8 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        activitySubtextView = findViewById(R.id.activity_info);
-        dateSubtextView = findViewById(R.id.date_info);
-        timeSubtextView = findViewById(R.id.time_info);
-        durationSubtextView = findViewById(R.id.duration_info);
-        distanceSubtextView = findViewById(R.id.distance_info);
-        calorieSubtextView = findViewById(R.id.calorie_info);
-        heartbeatSubtextView = findViewById(R.id.heartbeat_info);
-        commentSubtextView = findViewById(R.id.comment_info);
-
-        findViewById(R.id.activity).setOnClickListener(this);
-        findViewById(R.id.date).setOnClickListener(this);
-        findViewById(R.id.time).setOnClickListener(this);
-        findViewById(R.id.duration).setOnClickListener(this);
-        findViewById(R.id.distance).setOnClickListener(this);
-        findViewById(R.id.calorie).setOnClickListener(this);
-        findViewById(R.id.heartbeat).setOnClickListener(this);
-        findViewById(R.id.comment).setOnClickListener(this);
-
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        units = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
-
-        Intent intent = getIntent();
-        activity = intent.getStringExtra("ACTIVITY_TYPE");
-        initializeDateTime();
-        duration = "0 mins";
-
-        distance = String.format("0 %s", units);
-        calorie = "0 cals";
-        heartbeat = "0 bpm";
-        comment = "";
-
+        setupFields();
+        setupDefaultFieldValues();
 
         if (savedInstanceState != null) {
             activity = savedInstanceState.getString("ACTIVITY");
@@ -102,61 +74,20 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
             comment = savedInstanceState.getString("COMMENT");
         }
 
-        initializeTexts();
+        setupTexts();
 
-    }
-
-    public void initializeDateTime() {
-        //sets date to current day
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
-
-        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        time = String.format("%02d:%02d", hourOfDay, minute);
-    }
-
-    public void initializeTexts() {
-        activitySubtextView.setText(activity);
-        dateSubtextView.setText(date);
-        timeSubtextView.setText(time);
-        durationSubtextView.setText(duration);
-        distanceSubtextView.setText(distance);
-        calorieSubtextView.setText(calorie);
-        heartbeatSubtextView.setText(heartbeat);
-        commentSubtextView.setText(comment);
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.date:
-                showDialog(Type.DATE);
-                break;
-            case R.id.time:
-                showDialog(Type.TIME);
-                break;
-            case R.id.duration:
-                showDialog(Type.DURATION);
-                break;
-            case R.id.distance:
-                showDialog(Type.DISTANCE);
-                break;
-            case R.id.calorie:
-                showDialog(Type.CALORIE);
-                break;
-            case R.id.heartbeat:
-                showDialog(Type.HEARTBEAT);
-                break;
-            case R.id.comment:
-                showDialog(Type.COMMENT);
-                break;
-            default:
-                break;
-        }
+        int id = v.getId();
+        if      (id == R.id.date)       { showDialog(DATE); }
+        else if (id == R.id.time)       { showDialog(TIME); }
+        else if (id == R.id.duration)   { showDialog(DURATION); }
+        else if (id == R.id.distance)   { showDialog(Type.DISTANCE); }
+        else if (id == R.id.calorie)    { showDialog(Type.CALORIE); }
+        else if (id == R.id.heartbeat)  { showDialog(Type.HEARTBEAT); }
+        else if (id == R.id.comment)    { showDialog(Type.COMMENT); }
     }
 
     void showDialog(RunDialogFragment.Type type) {
@@ -167,47 +98,37 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onDialogResponse(Type type, String response) {
-        switch(type) {
-            case DATE:
-                dateSubtextView.setText(response);
-                date = response;
-                break;
-            case TIME:
-                timeSubtextView.setText(response);
-                time = response;
-                break;
-            case DURATION:
-                if (!response.equals("") && !response.equals(".")) {
-                    duration = response + " mins";
-                    durationSubtextView.setText(duration);
-                }
-                break;
-            case DISTANCE:
-                if (!response.equals("") && !response.equals(".")) {
-                    distance = response + " kms";
-                    distanceSubtextView.setText(distance);
-                }
-                break;
-            case CALORIE:
-                if (!response.equals("")) {
-                    calorie = response + " cals";
-                    calorieSubtextView.setText(calorie);
-                }
-                break;
-            case HEARTBEAT:
-                if (!response.equals("")) {
-                    heartbeat = response + " bpm";
-                    heartbeatSubtextView.setText(heartbeat);
-                }
-                break;
-            case COMMENT:
-                if (!response.equals("")) {
-                    comment = response;
-                    commentSubtextView.setText(comment);
-                }
-                break;
-            default:
-                break;
+        if (type == DATE) {
+            dateSubtextView.setText(response);
+            date = response;
+        } else if   (type == TIME) {
+            timeSubtextView.setText(response);
+            time = response;
+        } else if   (type == DURATION) {
+            if (!response.equals("") && !response.equals(".")) {
+                duration = response + " mins";
+                durationSubtextView.setText(duration);
+            }
+        } else if   (type == DISTANCE) {
+            if (!response.equals("") && !response.equals(".")) {
+                distance = response + " kms";
+                distanceSubtextView.setText(distance);
+            }
+        } else if   (type == CALORIE) {
+            if (!response.equals("")) {
+                calorie = response + " cals";
+                calorieSubtextView.setText(calorie);
+            }
+        } else if   (type == HEARTBEAT) {
+            if (!response.equals("")) {
+                heartbeat = response + " bpm";
+                heartbeatSubtextView.setText(heartbeat);
+            }
+        } else if   (type == COMMENT) {
+            if (!response.equals("")) {
+                comment = response;
+                commentSubtextView.setText(comment);
+            }
         }
     }
 
@@ -225,6 +146,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         super.onSaveInstanceState(outState);
     }
 
+    // Setup methods
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_entry, menu);
@@ -244,6 +166,62 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         return super.onOptionsItemSelected(item);
     }
 
+    public void setupFields() {
+        activitySubtextView = findViewById(R.id.activity_info);
+        dateSubtextView = findViewById(R.id.date_info);
+        timeSubtextView = findViewById(R.id.time_info);
+        durationSubtextView = findViewById(R.id.duration_info);
+        distanceSubtextView = findViewById(R.id.distance_info);
+        calorieSubtextView = findViewById(R.id.calorie_info);
+        heartbeatSubtextView = findViewById(R.id.heartbeat_info);
+        commentSubtextView = findViewById(R.id.comment_info);
+
+        findViewById(R.id.activity).setOnClickListener(this);
+        findViewById(R.id.date).setOnClickListener(this);
+        findViewById(R.id.time).setOnClickListener(this);
+        findViewById(R.id.duration).setOnClickListener(this);
+        findViewById(R.id.distance).setOnClickListener(this);
+        findViewById(R.id.calorie).setOnClickListener(this);
+        findViewById(R.id.heartbeat).setOnClickListener(this);
+        findViewById(R.id.comment).setOnClickListener(this);
+    }
+    public void setupDefaultFieldValues() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        units = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
+
+        Intent intent = getIntent();
+        activity = intent.getStringExtra("ACTIVITY_TYPE");
+        initializeDateTime();
+        distance = String.format("0 %s", units);
+        duration = "0 mins";
+        calorie = "0 cals";
+        heartbeat = "0 bpm";
+        comment = "";
+    }
+    public void initializeDateTime() {
+        //sets date to current day
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
+
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        time = String.format("%02d:%02d", hourOfDay, minute);
+    }
+    public void setupTexts() {
+        activitySubtextView.setText(activity);
+        dateSubtextView.setText(date);
+        timeSubtextView.setText(time);
+        durationSubtextView.setText(duration);
+        distanceSubtextView.setText(distance);
+        calorieSubtextView.setText(calorie);
+        heartbeatSubtextView.setText(heartbeat);
+        commentSubtextView.setText(comment);
+    }
+
+    // Logging methods
     @Override
     public void onStart() {
         super.onStart();
