@@ -27,6 +27,7 @@ import java.util.Calendar;
 import static com.bbb.bbdev1.run.RunDialogFragment.Type.*;
 
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
+    private ExerciseEntryDataSource datasource;
     final String TAG = "RUN_TAG";
 
     String activity;
@@ -37,7 +38,11 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     String calorie;
     String heartbeat;
     String comment;
+    // suffixes
     String units;
+    String mins;
+    String bpm;
+    String cals;
 
     TextView activitySubtextView;
     TextView dateSubtextView;
@@ -56,13 +61,14 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        datasource = new ExerciseEntryDataSource(this);
+        datasource.open();
+
         setupFields();
         setupDefaultFieldValues();
-
         if (savedInstanceState != null) {
             activity = savedInstanceState.getString("ACTIVITY");
             date = savedInstanceState.getString("DATE");
@@ -73,7 +79,6 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
             heartbeat = savedInstanceState.getString("HEARTBEAT");
             comment = savedInstanceState.getString("COMMENT");
         }
-
         setupTexts();
 
     }
@@ -106,23 +111,23 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
             time = response;
         } else if   (type == DURATION) {
             if (!response.equals("") && !response.equals(".")) {
-                duration = response + " mins";
-                durationSubtextView.setText(duration);
+                duration = response;
+                durationSubtextView.setText(duration + mins);
             }
         } else if   (type == DISTANCE) {
             if (!response.equals("") && !response.equals(".")) {
-                distance = response + " kms";
-                distanceSubtextView.setText(distance);
+                distance = response;
+                distanceSubtextView.setText(distance + units);
             }
         } else if   (type == CALORIE) {
             if (!response.equals("")) {
-                calorie = response + " cals";
-                calorieSubtextView.setText(calorie);
+                calorie = response;
+                calorieSubtextView.setText(calorie + cals);
             }
         } else if   (type == HEARTBEAT) {
             if (!response.equals("")) {
-                heartbeat = response + " bpm";
-                heartbeatSubtextView.setText(heartbeat);
+                heartbeat = response;
+                heartbeatSubtextView.setText(heartbeat + bpm);
             }
         } else if   (type == COMMENT) {
             if (!response.equals("")) {
@@ -187,15 +192,18 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     }
     public void setupDefaultFieldValues() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        units = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
+        units = " " + sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
+        mins = " mins";
+        bpm = " bpm";
+        cals = " cals";
 
         Intent intent = getIntent();
         activity = intent.getStringExtra("ACTIVITY_TYPE");
         initializeDateTime();
-        distance = String.format("0 %s", units);
-        duration = "0 mins";
-        calorie = "0 cals";
-        heartbeat = "0 bpm";
+        distance = "0";
+        duration = "0";
+        calorie = "0";
+        heartbeat = "0";
         comment = "";
     }
     public void initializeDateTime() {
@@ -214,10 +222,10 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         activitySubtextView.setText(activity);
         dateSubtextView.setText(date);
         timeSubtextView.setText(time);
-        durationSubtextView.setText(duration);
-        distanceSubtextView.setText(distance);
-        calorieSubtextView.setText(calorie);
-        heartbeatSubtextView.setText(heartbeat);
+        durationSubtextView.setText(duration + mins);
+        distanceSubtextView.setText(distance + units);
+        calorieSubtextView.setText(calorie + cals);
+        heartbeatSubtextView.setText(heartbeat + bpm);
         commentSubtextView.setText(comment);
     }
 
@@ -230,11 +238,13 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onPause() {
         super.onPause();
+        datasource.close();
         Log.d(TAG, String.format("%s onPause() called", this.getClass().getName()));
     }
     @Override
     public void onResume() {
         super.onResume();
+        datasource.open();
         Log.d(TAG, String.format("%s onResume() called", this.getClass().getName()));
     }
     @Override

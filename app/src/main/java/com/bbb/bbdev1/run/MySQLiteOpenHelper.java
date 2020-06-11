@@ -12,17 +12,17 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_INPUT_TYPE = "input_type";
     public static final String COLUMN_ACTIVITY_TYPE = "activity_type";
-    public static final String COLUMN_DATE_TIME = "data_time";
-    public static final String COLUMN_DURATION = "data_time";
-    public static final String COLUMN_DISTANCE = "data_time";
-    public static final String COLUMN_AVG_PACE = "data_time";
-    public static final String COLUMN_AVG_SPEED = "data_time";
-    public static final String COLUMN_CALORIES = "data_time";
-    public static final String COLUMN_CLIMB = "data_time";
-    public static final String COLUMN_HEARTRATE = "data_time";
-    public static final String COLUMN_COMMENT = "data_time";
-    public static final String COLUMN_PRIVACY = "data_time";
-    public static final String COLUMN_GPS_DATA = "data_time";
+    public static final String COLUMN_DATE_TIME = "date_time";
+    public static final String COLUMN_DURATION = "duration";
+    public static final String COLUMN_DISTANCE = "distance";
+    public static final String COLUMN_AVG_PACE = "avg_pace";
+    public static final String COLUMN_AVG_SPEED = "avg_speed";
+    public static final String COLUMN_CALORIES = "calories";
+    public static final String COLUMN_CLIMB = "climb";
+    public static final String COLUMN_HEARTRATE = "heartrate";
+    public static final String COLUMN_COMMENT = "comment";
+    public static final String COLUMN_PRIVACY = "privacy";
+    public static final String COLUMN_GPS_DATA = "gps_data";
 
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + TABLE_ENTRIES + "("
