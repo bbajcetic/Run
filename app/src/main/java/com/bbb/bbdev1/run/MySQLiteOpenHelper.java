@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class MySQLiteOpenHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "ExerciseEntries.db";
 
     public static final String TABLE_ENTRIES = "exercise_entries";
@@ -27,19 +27,19 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + TABLE_ENTRIES + "("
                     + COLUMN_ID + " integer primary key autoincrement, "
-                    + COLUMN_INPUT_TYPE + "integer not null,"
-                    + COLUMN_ACTIVITY_TYPE + "integer not null,"
-                    + COLUMN_DATE_TIME + "datetime not null,"
-                    + COLUMN_DURATION + "integer not null,"
-                    + COLUMN_DISTANCE + "double not null,"
-                    + COLUMN_AVG_PACE + "double not null,"
-                    + COLUMN_AVG_SPEED + "double not null,"
-                    + COLUMN_CALORIES + "integer not null,"
-                    + COLUMN_CLIMB + "double not null,"
-                    + COLUMN_HEARTRATE + "int not null,"
-                    + COLUMN_COMMENT + "text not null,"
-                    + COLUMN_PRIVACY + "integer not null,"
-                    + COLUMN_GPS_DATA + "text not null"
+                    + COLUMN_INPUT_TYPE + " integer not null, "
+                    + COLUMN_ACTIVITY_TYPE + " text not null, "
+                    + COLUMN_DATE_TIME + " datetime not null, "
+                    + COLUMN_DURATION + " integer not null, "
+                    + COLUMN_DISTANCE + " float, "
+                    + COLUMN_AVG_PACE + " float, "
+                    + COLUMN_AVG_SPEED + " float, "
+                    + COLUMN_CALORIES + " integer, "
+                    + COLUMN_CLIMB + " float, "
+                    + COLUMN_HEARTRATE + " integer, "
+                    + COLUMN_COMMENT + " text, "
+                    + COLUMN_PRIVACY + " integer, "
+                    + COLUMN_GPS_DATA + " text"
                     + ");";
     public static final String DATABASE_DROP =
             "DROP TABLE IF EXISTS " + TABLE_ENTRIES;

@@ -40,6 +40,9 @@ public class ExerciseEntryDataSource {
         database = dbHelper.getWritableDatabase();
     }
 
+    public void reset() {
+        dbHelper.onUpgrade(database, DATABASE_VERSION, DATABASE_VERSION);
+    }
     public void close() {
         dbHelper.close();
     }
@@ -48,6 +51,18 @@ public class ExerciseEntryDataSource {
     public ExerciseEntry addExercise(ExerciseEntry entry) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_INPUT_TYPE, entry.getInputType());
+        values.put(COLUMN_ACTIVITY_TYPE, entry.getActivityType());
+        values.put(COLUMN_DATE_TIME, entry.getDateTime());
+        values.put(COLUMN_DURATION, entry.getDuration());
+        values.put(COLUMN_DISTANCE, entry.getDistance());
+        values.put(COLUMN_AVG_PACE, entry.getAvgPace());
+        values.put(COLUMN_AVG_SPEED, entry.getAvgSpeed());
+        values.put(COLUMN_CALORIES, entry.getCalorie());
+        values.put(COLUMN_CLIMB, entry.getClimb());
+        values.put(COLUMN_HEARTRATE, entry.getHeartRate());
+        values.put(COLUMN_COMMENT, entry.getComment());
+        values.put(COLUMN_PRIVACY, entry.getPrivacy());
+        values.put(COLUMN_GPS_DATA, entry.getGPSData());
         long entryId = database.insert(MySQLiteOpenHelper.TABLE_ENTRIES, null, values);
         entry.setId(entryId);
 
@@ -77,9 +92,22 @@ public class ExerciseEntryDataSource {
         return exercises;
     }
     private ExerciseEntry getExerciseFromCursor(Cursor cursor) {
-        ExerciseEntry entry = new ExerciseEntry();
-        entry.setId(cursor.getLong(0));
-        entry.setInputType(cursor.getInt(1));
+        ExerciseEntry entry = new ExerciseEntry(
+                cursor.getLong(0),
+                cursor.getInt(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getInt(4),
+                cursor.getDouble(5),
+                cursor.getDouble(6),
+                cursor.getDouble(7),
+                cursor.getInt(8),
+                cursor.getDouble(9),
+                cursor.getInt(10),
+                cursor.getString(11),
+                cursor.getInt(12),
+                cursor.getString(13)
+        );
         return entry;
     }
 }

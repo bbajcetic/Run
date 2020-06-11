@@ -25,6 +25,7 @@ import java.sql.Time;
 import java.util.Calendar;
 
 import static com.bbb.bbdev1.run.RunDialogFragment.Type.*;
+import static com.bbb.bbdev1.run.ExerciseEntry.InputType.*;
 
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
     private ExerciseEntryDataSource datasource;
@@ -38,6 +39,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     String calorie;
     String heartbeat;
     String comment;
+    boolean privacy;
     // suffixes
     String units;
     String mins;
@@ -93,6 +95,21 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         else if (id == R.id.calorie)    { showDialog(Type.CALORIE); }
         else if (id == R.id.heartbeat)  { showDialog(Type.HEARTBEAT); }
         else if (id == R.id.comment)    { showDialog(Type.COMMENT); }
+    }
+
+    public void saveEntry() {
+        ExerciseEntry.InputType inputTypeValue = Manual;
+        int durationValue = Integer.parseInt(duration);
+        double distanceValue = Double.parseDouble(distance);
+        int caloriesValue = Integer.parseInt(calorie);
+        int heartrateValue = Integer.parseInt(heartbeat);
+        int privacyValue = privacy ? 1 : 0;
+        ExerciseEntry entry = new ExerciseEntry(
+                Manual.getIndex(), activity, date + " " + time, durationValue,
+                distanceValue, caloriesValue, heartrateValue, comment, privacyValue
+                );
+        entry.setInputType(0);
+        datasource.addExercise(entry);
     }
 
     void showDialog(RunDialogFragment.Type type) {
@@ -166,6 +183,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
                 return true;
             case R.id.action_save:
                 // add entry to database
+                saveEntry();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -205,6 +223,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         calorie = "0";
         heartbeat = "0";
         comment = "";
+        privacy = sharedPref.getBoolean(SettingsActivity.PRIVACY_PREF_KEY, false);
     }
     public void initializeDateTime() {
         //sets date to current day
