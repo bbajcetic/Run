@@ -184,6 +184,10 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
             case R.id.action_save:
                 // add entry to database
                 saveEntry();
+                // return to Main screen
+                Toast.makeText(this, "Entry saved!", Toast.LENGTH_SHORT).show();
+                finish();
+
                 return true;
         }
         return super.onOptionsItemSelected(item);
