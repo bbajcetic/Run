@@ -3,7 +3,11 @@ package com.bbb.bbdev1.run;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +27,9 @@ import java.util.List;
  * Use the {@link HistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<List<ExerciseEntry>> {
+    private static final int ENTRIES_LOADER_ID = 1;
     protected ExerciseEntryDataSource dataSource;
     final String TAG = "RUN_TAG";
 
@@ -85,11 +91,32 @@ public class HistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         dataSource.open();
-        allEntries.clear();
-        allEntries.addAll(dataSource.getAllExercises());
-        entryListAdapter.notifyDataSetChanged();
-        Toast.makeText(getActivity(), "" + allEntries.size(), Toast.LENGTH_SHORT).show();
+        LoaderManager loader = LoaderManager.getInstance(this);
+        loader.initLoader(ENTRIES_LOADER_ID, null, this).forceLoad();
         Log.d(TAG, String.format("%s onResume() called", "History Fragment"));
     }
 
+    @NonNull
+    @Override
+    public Loader<List<ExerciseEntry>> onCreateLoader(int id, @Nullable Bundle args) {
+        if (id == ENTRIES_LOADER_ID) {
+            return new EntryListLoader(getActivity());
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<List<ExerciseEntry>> loader, List<ExerciseEntry> data) {
+        if (loader.getId() == ENTRIES_LOADER_ID) {
+            if (data.size() > 0) {
+                entryListAdapter.clear();
+                entryListAdapter.addAll(data);
+                entryListAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<List<ExerciseEntry>> loader) {
+    }
 }
