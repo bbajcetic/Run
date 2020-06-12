@@ -203,6 +203,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
                 setResult(RESULT_OK, intent);
                 Toast.makeText(this, "Entry deleted!", Toast.LENGTH_SHORT).show();
                 finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

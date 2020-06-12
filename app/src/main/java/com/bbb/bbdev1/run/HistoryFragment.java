@@ -95,8 +95,8 @@ public class HistoryFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_ENTRY_REQUEST && resultCode == RESULT_OK) {
             // reload the list
-            LoaderManager loader = LoaderManager.getInstance(this);
-            loader.initLoader(ENTRIES_LOADER_ID, null, this).forceLoad();
+            /*LoaderManager loader = LoaderManager.getInstance(this);
+            loader.initLoader(ENTRIES_LOADER_ID, null, this).forceLoad();*/
         }
     }
 

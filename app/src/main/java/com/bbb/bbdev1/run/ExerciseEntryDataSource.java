@@ -49,30 +49,11 @@ public class ExerciseEntryDataSource {
     }
 
     // Database operations
-    public ExerciseEntry addExercise(ExerciseEntry entry) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_INPUT_TYPE, entry.getInputType());
-        values.put(COLUMN_ACTIVITY_TYPE, entry.getActivityType());
-        values.put(COLUMN_DATE_TIME, entry.getDateTime());
-        values.put(COLUMN_DURATION, entry.getDuration());
-        values.put(COLUMN_DISTANCE, entry.getDistance());
-        values.put(COLUMN_AVG_PACE, entry.getAvgPace());
-        values.put(COLUMN_AVG_SPEED, entry.getAvgSpeed());
-        values.put(COLUMN_CALORIES, entry.getCalorie());
-        values.put(COLUMN_CLIMB, entry.getClimb());
-        values.put(COLUMN_HEARTRATE, entry.getHeartRate());
-        values.put(COLUMN_COMMENT, entry.getComment());
-        values.put(COLUMN_PRIVACY, entry.getPrivacy());
-        values.put(COLUMN_GPS_DATA, entry.getGPSData());
-        long entryId = database.insert(MySQLiteOpenHelper.TABLE_ENTRIES, null, values);
-        entry.setId(entryId);
-
-        // Check that the entry was inserted
-        // fill out this section
-        return entry;
+    public void addExercise(ExerciseEntry entry) {
+        new insertAsyncTask(database, entry).execute();
     }
     public void deleteExercise(long entryId) {
-        database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, MySQLiteOpenHelper.COLUMN_ID + " = " + entryId, null);
+        new deleteAsyncTask(database, entryId).execute();
     }
     public void deleteAllExercises() {
         database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, null, null);
@@ -91,12 +72,6 @@ public class ExerciseEntryDataSource {
         cursor.close();
         return exercises;
     }
-
-    /*public List<ExerciseEntry> getAllExercises() {
-        List<ExerciseEntry> exercises = new ArrayList<>();
-        //new getAllAsyncTask(database, exercises).execute();
-        return exercises;
-    }*/
 
     public static ExerciseEntry getExerciseFromCursor(Cursor cursor) {
         ExerciseEntry entry = new ExerciseEntry(
@@ -118,28 +93,51 @@ public class ExerciseEntryDataSource {
         return entry;
     }
 
-    /*private static class getAllAsyncTask extends AsyncTask<Void, Void, Void> {
+    private static class deleteAsyncTask extends AsyncTask<Void, Void, Void> {
         private SQLiteDatabase database;
-        private List<ExerciseEntry> exercises;
+        private long entryId;
 
-        getAllAsyncTask(SQLiteDatabase database, List<ExerciseEntry> exercises) {
+        deleteAsyncTask(SQLiteDatabase database, long entryId) {
             this.database = database;
-            this.exercises = exercises;
+            this.entryId = entryId;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_ENTRIES,
-                    ExerciseEntryDataSource.columns, null, null,
-                    null, null, null);
-            cursor.moveToFirst();
-            while(!cursor.isAfterLast()) {
-                ExerciseEntry entry = ExerciseEntryDataSource.getExerciseFromCursor(cursor);
-                exercises.add(entry);
-                cursor.moveToNext();
-            }
-            cursor.close();
+            database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, MySQLiteOpenHelper.COLUMN_ID + " = " + entryId, null);
             return null;
         }
-    }*/
+    }
+    private static class insertAsyncTask extends AsyncTask<Void, Void, Void> {
+        private SQLiteDatabase database;
+        private ExerciseEntry entry;
+
+        insertAsyncTask(SQLiteDatabase database, ExerciseEntry entry) {
+            this.database = database;
+            this.entry = entry;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_INPUT_TYPE, entry.getInputType());
+            values.put(COLUMN_ACTIVITY_TYPE, entry.getActivityType());
+            values.put(COLUMN_DATE_TIME, entry.getDateTime());
+            values.put(COLUMN_DURATION, entry.getDuration());
+            values.put(COLUMN_DISTANCE, entry.getDistance());
+            values.put(COLUMN_AVG_PACE, entry.getAvgPace());
+            values.put(COLUMN_AVG_SPEED, entry.getAvgSpeed());
+            values.put(COLUMN_CALORIES, entry.getCalorie());
+            values.put(COLUMN_CLIMB, entry.getClimb());
+            values.put(COLUMN_HEARTRATE, entry.getHeartRate());
+            values.put(COLUMN_COMMENT, entry.getComment());
+            values.put(COLUMN_PRIVACY, entry.getPrivacy());
+            values.put(COLUMN_GPS_DATA, entry.getGPSData());
+            long entryId = database.insert(MySQLiteOpenHelper.TABLE_ENTRIES, null, values);
+            entry.setId(entryId);
+
+            return null;
+        }
+    }
+
 }
