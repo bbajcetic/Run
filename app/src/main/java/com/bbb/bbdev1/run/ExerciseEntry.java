@@ -1,5 +1,7 @@
 package com.bbb.bbdev1.run;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.renderscript.ScriptGroup;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -7,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ExerciseEntry {
+public class ExerciseEntry implements Parcelable {
     private Long id;
 
     private int inputType;         // Manual, GPS or Automatic
@@ -52,6 +54,39 @@ public class ExerciseEntry {
         putGPSData(gpsData);
     }
 
+    protected ExerciseEntry(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        inputType = in.readInt();
+        activityType = in.readString();
+        dateTime = in.readString();
+        duration = in.readInt();
+        distance = in.readDouble();
+        avgPace = in.readDouble();
+        avgSpeed = in.readDouble();
+        calorie = in.readInt();
+        climb = in.readDouble();
+        heartRate = in.readInt();
+        comment = in.readString();
+        privacy = in.readInt();
+        locationList = in.createTypedArrayList(LatLng.CREATOR);
+    }
+
+    public static final Creator<ExerciseEntry> CREATOR = new Creator<ExerciseEntry>() {
+        @Override
+        public ExerciseEntry createFromParcel(Parcel in) {
+            return new ExerciseEntry(in);
+        }
+
+        @Override
+        public ExerciseEntry[] newArray(int size) {
+            return new ExerciseEntry[size];
+        }
+    };
+
     public Long getId() { return id; }
     public int getInputType() { return inputType; }
     public String getActivityType() { return activityType; }
@@ -87,6 +122,34 @@ public class ExerciseEntry {
     @Override
     public String toString() {
         return "Exercise #" + id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeInt(inputType);
+        dest.writeString(activityType);
+        dest.writeString(dateTime);
+        dest.writeInt(duration);
+        dest.writeDouble(distance);
+        dest.writeDouble(avgPace);
+        dest.writeDouble(avgSpeed);
+        dest.writeInt(calorie);
+        dest.writeDouble(climb);
+        dest.writeInt(heartRate);
+        dest.writeString(comment);
+        dest.writeInt(privacy);
+        dest.writeTypedList(locationList);
     }
 
     enum InputType {

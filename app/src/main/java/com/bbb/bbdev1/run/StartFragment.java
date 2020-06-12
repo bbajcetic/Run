@@ -60,6 +60,7 @@ public class StartFragment extends Fragment implements AdapterView.OnItemSelecte
                 } else if (inputTypeSelected.equals("Manual")) {
                     Intent manualEntryIntent = new Intent(getActivity(), ManualEntryActivity.class);
                     manualEntryIntent.putExtra("ACTIVITY_TYPE", activityTypeSelected);
+                    manualEntryIntent.putExtra("ACTION", "add");
                     startActivity(manualEntryIntent);
                 }
             }

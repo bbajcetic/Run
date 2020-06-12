@@ -46,6 +46,8 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     String bpm;
     String cals;
 
+    boolean isEditing;
+
     TextView activitySubtextView;
     TextView dateSubtextView;
     TextView timeSubtextView;
@@ -70,7 +72,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         dataSource.open();
 
         setupFields();
-        setupDefaultFieldValues();
+        setupFieldValues();
         if (savedInstanceState != null) {
             activity = savedInstanceState.getString("ACTIVITY");
             date = savedInstanceState.getString("DATE");
@@ -87,6 +89,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
+        if (isEditing) { return; }
         int id = v.getId();
         if      (id == R.id.date)       { showDialog(DATE); }
         else if (id == R.id.time)       { showDialog(TIME); }
@@ -171,7 +174,11 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     // Setup methods
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_entry, menu);
+        if (isEditing) {
+            getMenuInflater().inflate(R.menu.menu_edit_entry, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_add_entry, menu);
+        }
         return true;
     }
     @Override
@@ -189,6 +196,11 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
                 finish();
 
                 return true;
+            case R.id.action_delete:
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+                Toast.makeText(this, "Entry deleted!", Toast.LENGTH_SHORT).show();
+                finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -212,22 +224,36 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.heartbeat).setOnClickListener(this);
         findViewById(R.id.comment).setOnClickListener(this);
     }
-    public void setupDefaultFieldValues() {
+    public void setupFieldValues() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         units = " " + sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
         mins = " mins";
         bpm = " bpm";
         cals = " cals";
-
         Intent intent = getIntent();
-        activity = intent.getStringExtra("ACTIVITY_TYPE");
-        initializeDateTime();
-        distance = "0";
-        duration = "0";
-        calorie = "0";
-        heartbeat = "0";
-        comment = "";
-        privacy = sharedPref.getBoolean(SettingsActivity.PRIVACY_PREF_KEY, false);
+        isEditing = intent.getStringExtra("ACTION").equals("edit");
+        if (isEditing) {
+            ExerciseEntry entry = intent.getParcelableExtra("ENTRY");
+            activity = entry.getActivityType();
+            String[] dateTime = entry.getDateTime().split(" ");
+            date = dateTime[0];
+            time = dateTime[1];
+            duration = Integer.toString(entry.getDuration());
+            distance = Double.toString(entry.getDistance());
+            calorie = Integer.toString(entry.getCalorie());
+            heartbeat = Integer.toString(entry.getHeartRate());
+            privacy = entry.getPrivacy() != 0;
+            comment = entry.getComment();
+        } else {
+            activity = intent.getStringExtra("ACTIVITY_TYPE");
+            initializeDateTime();
+            distance = "0";
+            duration = "0";
+            calorie = "0";
+            heartbeat = "0";
+            comment = "";
+            privacy = sharedPref.getBoolean(SettingsActivity.PRIVACY_PREF_KEY, false);
+        }
     }
     public void initializeDateTime() {
         //sets date to current day

@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +31,7 @@ import java.util.List;
  */
 public class HistoryFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<List<ExerciseEntry>> {
+    private static final int EDIT_ENTRY_REQUEST = 1;
     private static final int ENTRIES_LOADER_ID = 1;
     protected ExerciseEntryDataSource dataSource;
     final String TAG = "RUN_TAG";
@@ -64,6 +67,7 @@ public class HistoryFragment extends Fragment
 
         entryList = root.findViewById(R.id.entry_list);
         setupEntryListAdapter();
+        setupEntryListOnClick();
 
         return root;
     }
@@ -78,9 +82,24 @@ public class HistoryFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // create intent to view details about exercise entry (query for exercise entry or pass in id)
+                Intent editIntent = new Intent(getActivity(), ManualEntryActivity.class);
+                editIntent.putExtra("ACTION", "edit");
+                editIntent.putExtra("ENTRY", allEntries.get(position));
+                startActivityForResult(editIntent, EDIT_ENTRY_REQUEST);
             }
         });
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_ENTRY_REQUEST && resultCode == RESULT_OK) {
+            // reload the list
+            LoaderManager loader = LoaderManager.getInstance(this);
+            loader.initLoader(ENTRIES_LOADER_ID, null, this).forceLoad();
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
