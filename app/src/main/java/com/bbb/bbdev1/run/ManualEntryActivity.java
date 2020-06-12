@@ -47,6 +47,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     String cals;
 
     boolean isEditing;
+    long entryId;
 
     TextView activitySubtextView;
     TextView dateSubtextView;
@@ -197,6 +198,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
                 return true;
             case R.id.action_delete:
+                dataSource.deleteExercise(entryId);
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
                 Toast.makeText(this, "Entry deleted!", Toast.LENGTH_SHORT).show();
@@ -234,6 +236,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         isEditing = intent.getStringExtra("ACTION").equals("edit");
         if (isEditing) {
             ExerciseEntry entry = intent.getParcelableExtra("ENTRY");
+            entryId = entry.getId();
             activity = entry.getActivityType();
             String[] dateTime = entry.getDateTime().split(" ");
             date = dateTime[0];

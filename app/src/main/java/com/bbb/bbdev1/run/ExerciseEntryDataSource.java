@@ -71,8 +71,7 @@ public class ExerciseEntryDataSource {
         // fill out this section
         return entry;
     }
-    public void deleteExercise(ExerciseEntry entry) {
-        long entryId = entry.getId();
+    public void deleteExercise(long entryId) {
         database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, MySQLiteOpenHelper.COLUMN_ID + " = " + entryId, null);
     }
     public void deleteAllExercises() {
