@@ -80,9 +80,25 @@ public class ExerciseEntryDataSource {
     }
     public List<ExerciseEntry> getAllExercises() {
         List<ExerciseEntry> exercises = new ArrayList<>();
-        new getAllAsyncTask(database, exercises).execute();
+        Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_ENTRIES,
+                ExerciseEntryDataSource.columns, null, null,
+                null, null, null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            ExerciseEntry entry = ExerciseEntryDataSource.getExerciseFromCursor(cursor);
+            exercises.add(entry);
+            cursor.moveToNext();
+        }
+        cursor.close();
         return exercises;
     }
+
+    /*public List<ExerciseEntry> getAllExercises() {
+        List<ExerciseEntry> exercises = new ArrayList<>();
+        //new getAllAsyncTask(database, exercises).execute();
+        return exercises;
+    }*/
+
     public static ExerciseEntry getExerciseFromCursor(Cursor cursor) {
         ExerciseEntry entry = new ExerciseEntry(
                 cursor.getLong(0),
@@ -103,7 +119,7 @@ public class ExerciseEntryDataSource {
         return entry;
     }
 
-    private static class getAllAsyncTask extends AsyncTask<Void, Void, Void> {
+    /*private static class getAllAsyncTask extends AsyncTask<Void, Void, Void> {
         private SQLiteDatabase database;
         private List<ExerciseEntry> exercises;
 
@@ -126,5 +142,5 @@ public class ExerciseEntryDataSource {
             cursor.close();
             return null;
         }
-    }
+    }*/
 }

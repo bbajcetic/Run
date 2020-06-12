@@ -28,7 +28,7 @@ import static com.bbb.bbdev1.run.RunDialogFragment.Type.*;
 import static com.bbb.bbdev1.run.ExerciseEntry.InputType.*;
 
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
-    private ExerciseEntryDataSource datasource;
+    private ExerciseEntryDataSource dataSource;
     final String TAG = "RUN_TAG";
 
     String activity;
@@ -66,8 +66,8 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        datasource = new ExerciseEntryDataSource(this);
-        datasource.open();
+        dataSource = new ExerciseEntryDataSource(this);
+        dataSource.open();
 
         setupFields();
         setupDefaultFieldValues();
@@ -109,7 +109,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
                 distanceValue, caloriesValue, heartrateValue, comment, privacyValue
                 );
         entry.setInputType(0);
-        datasource.addExercise(entry);
+        dataSource.addExercise(entry);
     }
 
     void showDialog(RunDialogFragment.Type type) {
@@ -261,13 +261,13 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onPause() {
         super.onPause();
-        datasource.close();
+        dataSource.close();
         Log.d(TAG, String.format("%s onPause() called", this.getClass().getName()));
     }
     @Override
     public void onResume() {
         super.onResume();
-        datasource.open();
+        dataSource.open();
         Log.d(TAG, String.format("%s onResume() called", this.getClass().getName()));
     }
     @Override
