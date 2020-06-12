@@ -42,8 +42,4 @@ class EntryListAdapter extends ArrayAdapter<ExerciseEntry> {
         textDatetime.setText(entry.getDateTime());
         return listView;
     }
-    
-    public void updateList(List<ExerciseEntry> newEntries) {
-        entryList = newEntries;
-    }
 }
