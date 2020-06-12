@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.bbb.bbdev1.run.Utils.convertFromKms;
+
 public class ExerciseEntry implements Parcelable {
     private Long id;
 
@@ -167,8 +169,8 @@ public class ExerciseEntry implements Parcelable {
         InputType type = InputType.values()[inputType];
         return type.name() + ": " + activityType;
     }
-    public String getStats() {
-        return distance + " kms, " + duration + " mins";
+    public String getStats(String unitPref) {
+        return convertFromKms(unitPref, distance) + " " + unitPref + ", " + duration + " mins";
     }
 
 }

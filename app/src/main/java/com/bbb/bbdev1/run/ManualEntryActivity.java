@@ -26,6 +26,8 @@ import java.util.Calendar;
 
 import static com.bbb.bbdev1.run.RunDialogFragment.Type.*;
 import static com.bbb.bbdev1.run.ExerciseEntry.InputType.*;
+import static com.bbb.bbdev1.run.Utils.convertFromKms;
+import static com.bbb.bbdev1.run.Utils.convertToKms;
 
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
     private ExerciseEntryDataSource dataSource;
@@ -104,7 +106,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
     public void saveEntry() {
         ExerciseEntry.InputType inputTypeValue = Manual;
         int durationValue = Integer.parseInt(duration);
-        double distanceValue = Double.parseDouble(distance);
+        double distanceValue = convertToKms(units, Double.parseDouble(distance));
         int caloriesValue = Integer.parseInt(calorie);
         int heartrateValue = Integer.parseInt(heartbeat);
         int privacyValue = privacy ? 1 : 0;
@@ -243,7 +245,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
             date = dateTime[0];
             time = dateTime[1];
             duration = Integer.toString(entry.getDuration());
-            distance = Double.toString(entry.getDistance());
+            distance = Double.toString(convertFromKms(units, entry.getDistance()));
             calorie = Integer.toString(entry.getCalorie());
             heartbeat = Integer.toString(entry.getHeartRate());
             privacy = entry.getPrivacy() != 0;

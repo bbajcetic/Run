@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         privacyPref = sharedPref.getBoolean(SettingsActivity.PRIVACY_PREF_KEY, false);
         unitPref = sharedPref.getString(SettingsActivity.UNIT_PREF_KEY, "kms");
-        Toast.makeText(this, unitPref, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, unitPref, Toast.LENGTH_SHORT).show();
 
 
     }
@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_PROFILE_REQUEST && resultCode == RESULT_OK) {
             // show a Toast displaying information about the Registration attempt
             String reply = data.getStringExtra(RegisterActivity.EDIT_PROFILE_REPLY);
@@ -138,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 signOut();
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
