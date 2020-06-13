@@ -182,7 +182,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         String pass_from_preferences = mPreferences.getString(email_field, null);
         boolean signin_success =
                 (pass_from_preferences != null && pass_from_preferences.equals(password_field));
-
+        Toast.makeText(getActivity(), "Email: " + email_field + ", Password: " + password_field + "\nActual password: " + pass_from_preferences, Toast.LENGTH_LONG).show();
         // save email and password state
         saveUIState();
 

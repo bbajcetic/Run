@@ -308,6 +308,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Registration failed (email already exists!)", Toast.LENGTH_SHORT).show();
             return Pair.create(false, false);
         }
+        Toast.makeText(this, mPreferences.getString("", null), Toast.LENGTH_LONG).show();
 
         boolean hasPasswordChanged = false;
         //Check if password has changed in Edit Profile screen
@@ -321,14 +322,26 @@ public class RegisterActivity extends AppCompatActivity {
         // Save email/password combination
         String session_email = mPreferences.getString("SESSION_EMAIL", "");
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.putString(session_email, password_field);
-        preferencesEditor.putInt(session_email   + KEY_GENDER, gender_field);
-        preferencesEditor.putString(session_email + KEY_NAME, name_field);
-        preferencesEditor.putString(session_email + KEY_PHONE, phoneField.getText().toString());
-        preferencesEditor.putString(session_email + KEY_MAJOR, majorField.getText().toString());
-        preferencesEditor.putString(session_email + KEY_CLASS, classField.getText().toString());
+        if (existingUser) {
+            preferencesEditor.putString(session_email, password_field);
+            Toast.makeText(this, "Saved! Email: " + session_email + ", Password: " + password_field, Toast.LENGTH_LONG).show();
+            preferencesEditor.putInt(session_email + KEY_GENDER, gender_field);
+            preferencesEditor.putString(session_email + KEY_NAME, name_field);
+            preferencesEditor.putString(session_email + KEY_PHONE, phoneField.getText().toString());
+            preferencesEditor.putString(session_email + KEY_MAJOR, majorField.getText().toString());
+            preferencesEditor.putString(session_email + KEY_CLASS, classField.getText().toString());
+        } else {
+            preferencesEditor.putString(email_field, password_field);
+            Toast.makeText(this, "Saved! Email: " + email_field + ", Password: " + password_field, Toast.LENGTH_LONG).show();
+            preferencesEditor.putInt(email_field + KEY_GENDER, gender_field);
+            preferencesEditor.putString(email_field + KEY_NAME, name_field);
+            preferencesEditor.putString(email_field + KEY_PHONE, phoneField.getText().toString());
+            preferencesEditor.putString(email_field + KEY_MAJOR, majorField.getText().toString());
+            preferencesEditor.putString(email_field + KEY_CLASS, classField.getText().toString());
+        }
 
         String uriString = mPreferences.getString(session_email + KEY_DISPLAY_PIC, null);
+
         Uri previousUri = (uriString == null) ? null : Uri.parse(uriString);
         if (afterCropUri != null && !afterCropUri.equals(previousUri)) {
             File displayPicFile = new File(this.getFilesDir(), email_field + SAVED_FILE_NAME);

@@ -10,9 +10,11 @@ import java.util.List;
 
 public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
     private final ExerciseEntryDataSource dataSource;
+    String email;
 
-    public EntryListLoader(@NonNull Context context) {
+    public EntryListLoader(@NonNull Context context, String email) {
         super(context);
+        this.email = email;
         dataSource = new ExerciseEntryDataSource(context);
         dataSource.open();
     }
@@ -20,6 +22,6 @@ public class EntryListLoader extends AsyncTaskLoader<List<ExerciseEntry>> {
     @Nullable
     @Override
     public List<ExerciseEntry> loadInBackground() {
-        return dataSource.getAllExercises();
+        return dataSource.getAllExercises(email);
     }
 }

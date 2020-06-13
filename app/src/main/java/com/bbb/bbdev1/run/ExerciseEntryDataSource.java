@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class ExerciseEntryDataSource {
 
     public static String[] columns = {
             COLUMN_ID,
+            COLUMN_EMAIL,
             COLUMN_INPUT_TYPE,
             COLUMN_ACTIVITY_TYPE,
             COLUMN_DATE_TIME,
@@ -49,19 +51,20 @@ public class ExerciseEntryDataSource {
     }
 
     // Database operations
-    public void addExercise(ExerciseEntry entry) {
-        new insertAsyncTask(database, entry).execute();
+    public void addExercise(ExerciseEntry entry, String email) {
+        new insertAsyncTask(database, entry, email).execute();
     }
-    public void deleteExercise(long entryId) {
-        new deleteAsyncTask(database, entryId).execute();
+    public void deleteExercise(long entryId, String email) {
+        new deleteAsyncTask(database, entryId, email).execute();
     }
-    public void deleteAllExercises() {
-        database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, null, null);
+    // if I use this, change this to run asynchronously
+    public void deleteAllExercises(String email) {
+        database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, MySQLiteOpenHelper.COLUMN_EMAIL + " = ?", new String[]{email});
     }
-    public List<ExerciseEntry> getAllExercises() {
+    public List<ExerciseEntry> getAllExercises(String email) {
         List<ExerciseEntry> exercises = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_ENTRIES,
-                ExerciseEntryDataSource.columns, null, null,
+                ExerciseEntryDataSource.columns, COLUMN_EMAIL + " = ?", new String[]{email},
                 null, null, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
@@ -74,21 +77,22 @@ public class ExerciseEntryDataSource {
     }
 
     public static ExerciseEntry getExerciseFromCursor(Cursor cursor) {
+        // make an enum for this in the future instead of hardcoded numbers
         ExerciseEntry entry = new ExerciseEntry(
                 cursor.getLong(0),
-                cursor.getInt(1),
-                cursor.getString(2),
+                cursor.getInt(2),
                 cursor.getString(3),
-                cursor.getInt(4),
+                cursor.getString(4),
                 cursor.getDouble(5),
                 cursor.getDouble(6),
                 cursor.getDouble(7),
-                cursor.getInt(8),
-                cursor.getDouble(9),
-                cursor.getInt(10),
-                cursor.getString(11),
-                cursor.getInt(12),
-                cursor.getString(13)
+                cursor.getDouble(8),
+                cursor.getInt(9),
+                cursor.getDouble(10),
+                cursor.getInt(11),
+                cursor.getString(12),
+                cursor.getInt(13),
+                cursor.getString(14)
         );
         return entry;
     }
@@ -96,30 +100,37 @@ public class ExerciseEntryDataSource {
     private static class deleteAsyncTask extends AsyncTask<Void, Void, Void> {
         private SQLiteDatabase database;
         private long entryId;
+        private String email;
 
-        deleteAsyncTask(SQLiteDatabase database, long entryId) {
+        deleteAsyncTask(SQLiteDatabase database, long entryId, String email) {
             this.database = database;
             this.entryId = entryId;
+            this.email = email;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            database.delete(MySQLiteOpenHelper.TABLE_ENTRIES, MySQLiteOpenHelper.COLUMN_ID + " = " + entryId, null);
+            int rows = database.delete(MySQLiteOpenHelper.TABLE_ENTRIES,
+                    COLUMN_ID + " = " + entryId + " AND " + COLUMN_EMAIL + " = ?", new String[]{email});
+            Log.d("RUN_TAG", entryId + " " + email + " " + Integer.toString(rows));
             return null;
         }
     }
     private static class insertAsyncTask extends AsyncTask<Void, Void, Void> {
         private SQLiteDatabase database;
         private ExerciseEntry entry;
+        private String email;
 
-        insertAsyncTask(SQLiteDatabase database, ExerciseEntry entry) {
+        insertAsyncTask(SQLiteDatabase database, ExerciseEntry entry, String email) {
             this.database = database;
             this.entry = entry;
+            this.email = email;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             ContentValues values = new ContentValues();
+            values.put(COLUMN_EMAIL, email);
             values.put(COLUMN_INPUT_TYPE, entry.getInputType());
             values.put(COLUMN_ACTIVITY_TYPE, entry.getActivityType());
             values.put(COLUMN_DATE_TIME, entry.getDateTime());

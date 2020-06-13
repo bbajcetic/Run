@@ -10,27 +10,29 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_ENTRIES = "exercise_entries";
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_INPUT_TYPE = "input_type";
-    public static final String COLUMN_ACTIVITY_TYPE = "activity_type";
-    public static final String COLUMN_DATE_TIME = "date_time";
-    public static final String COLUMN_DURATION = "duration";
-    public static final String COLUMN_DISTANCE = "distance";
-    public static final String COLUMN_AVG_PACE = "avg_pace";
-    public static final String COLUMN_AVG_SPEED = "avg_speed";
-    public static final String COLUMN_CALORIES = "calories";
-    public static final String COLUMN_CLIMB = "climb";
-    public static final String COLUMN_HEARTRATE = "heartrate";
-    public static final String COLUMN_COMMENT = "comment";
-    public static final String COLUMN_PRIVACY = "privacy";
-    public static final String COLUMN_GPS_DATA = "gps_data";
+    public static final String COLUMN_EMAIL = "EMAIL";
+    public static final String COLUMN_INPUT_TYPE = "INPUT_TYPE";
+    public static final String COLUMN_ACTIVITY_TYPE = "ACTIVITY_TYPE";
+    public static final String COLUMN_DATE_TIME = "DATE_TIME";
+    public static final String COLUMN_DURATION = "DURATION";
+    public static final String COLUMN_DISTANCE = "DISTANCE";
+    public static final String COLUMN_AVG_PACE = "AVG_PACE";
+    public static final String COLUMN_AVG_SPEED = "AVG_SPEED";
+    public static final String COLUMN_CALORIES = "CALORIES";
+    public static final String COLUMN_CLIMB = "CLIMB";
+    public static final String COLUMN_HEARTRATE = "HEARTRATE";
+    public static final String COLUMN_COMMENT = "COMMENT";
+    public static final String COLUMN_PRIVACY = "PRIVACY";
+    public static final String COLUMN_GPS_DATA = "GPS_DATA";
 
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + TABLE_ENTRIES + "("
                     + COLUMN_ID + " integer primary key autoincrement, "
+                    + COLUMN_EMAIL + " text not null, "
                     + COLUMN_INPUT_TYPE + " integer not null, "
                     + COLUMN_ACTIVITY_TYPE + " text not null, "
                     + COLUMN_DATE_TIME + " datetime not null, "
-                    + COLUMN_DURATION + " integer not null, "
+                    + COLUMN_DURATION + " float not null, "
                     + COLUMN_DISTANCE + " float, "
                     + COLUMN_AVG_PACE + " float, "
                     + COLUMN_AVG_SPEED + " float, "

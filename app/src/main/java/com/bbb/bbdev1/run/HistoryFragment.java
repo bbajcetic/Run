@@ -1,6 +1,7 @@
 package com.bbb.bbdev1.run;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -35,6 +37,8 @@ public class HistoryFragment extends Fragment
     private static final int ENTRIES_LOADER_ID = 1;
     protected ExerciseEntryDataSource dataSource;
     final String TAG = "RUN_TAG";
+    private SharedPreferences mPreferences;
+    String email;
 
     private ListView entryList;
     private List<ExerciseEntry> allEntries = new ArrayList<>();
@@ -59,11 +63,13 @@ public class HistoryFragment extends Fragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_history, container, false);
+        mPreferences = getActivity().getSharedPreferences(SignInActivity.PROFILES_FILE, MODE_PRIVATE);
+        email = mPreferences.getString("SESSION_EMAIL", null);
+        assert(email != null); //have to have a valid session email, if not, sign user out (assert for now)
 
         dataSource = new ExerciseEntryDataSource(getActivity());
         dataSource.open();
         //dataSource.reset();
-        allEntries = dataSource.getAllExercises();
 
         entryList = root.findViewById(R.id.entry_list);
         setupEntryListAdapter();
@@ -119,7 +125,7 @@ public class HistoryFragment extends Fragment
     @Override
     public Loader<List<ExerciseEntry>> onCreateLoader(int id, @Nullable Bundle args) {
         if (id == ENTRIES_LOADER_ID) {
-            return new EntryListLoader(getActivity());
+            return new EntryListLoader(getActivity(), email);
         }
         return null;
     }

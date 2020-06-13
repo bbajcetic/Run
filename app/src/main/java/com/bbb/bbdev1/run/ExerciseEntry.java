@@ -17,7 +17,7 @@ public class ExerciseEntry implements Parcelable {
     private int inputType;         // Manual, GPS or Automatic
     private String activityType;      // Running, cycling, etc.
     private String dateTime;     // When did this entry happen
-    private int duration;          // Exercise duration in seconds
+    private double duration;          // Exercise duration in minutes
     private double distance;       // Distance traveled. Either in meters or feet
     private double avgPace;        // Average pace
     private double avgSpeed;       // Average speed
@@ -28,7 +28,7 @@ public class ExerciseEntry implements Parcelable {
     private int privacy;
     private ArrayList<LatLng> locationList;    // Location list
 
-    public ExerciseEntry(int inputType, String activityType, String dateTime, int duration, double distance,
+    public ExerciseEntry(int inputType, String activityType, String dateTime, double duration, double distance,
                          int calorie, int heartRate, String comment, int privacy) {
         this.id = -1L;
         this.inputType = inputType;
@@ -45,7 +45,7 @@ public class ExerciseEntry implements Parcelable {
         this.privacy = privacy;
         this.locationList = null;
     }
-    public ExerciseEntry(Long id, int inputType, String activityType, String dateTime, int duration, double distance,
+    public ExerciseEntry(Long id, int inputType, String activityType, String dateTime, double duration, double distance,
                          double avgPace, double avgSpeed, int calorie, double climb, int heartRate, String comment,
                          int privacy, String gpsData) {
         this(inputType, activityType, dateTime, duration, distance, calorie, heartRate, comment, privacy);
@@ -65,7 +65,7 @@ public class ExerciseEntry implements Parcelable {
         inputType = in.readInt();
         activityType = in.readString();
         dateTime = in.readString();
-        duration = in.readInt();
+        duration = in.readDouble();
         distance = in.readDouble();
         avgPace = in.readDouble();
         avgSpeed = in.readDouble();
@@ -93,7 +93,7 @@ public class ExerciseEntry implements Parcelable {
     public int getInputType() { return inputType; }
     public String getActivityType() { return activityType; }
     public String getDateTime() { return dateTime; }
-    public int getDuration() { return duration; }
+    public double getDuration() { return duration; }
     public double getDistance() { return distance; }
     public double getAvgPace() { return avgPace; }
     public double getAvgSpeed() { return avgSpeed; }
@@ -109,7 +109,7 @@ public class ExerciseEntry implements Parcelable {
     public void setInputType(int inputType) { this.inputType = inputType; }
     public void setActivityType(String activityType) { this.activityType = activityType; }
     public void setDateTime(String dateTime) { this.dateTime = dateTime; }
-    public void setDuration(int duration) { this.duration = duration; }
+    public void setDuration(double duration) { this.duration = duration; }
     public void setDistance(double distance) { this.distance = distance; }
     public void setAvgPace(double avgPace) { this.avgPace = avgPace; }
     public void setAvgSpeed(double avgSpeed) { this.avgSpeed = avgSpeed; }
@@ -142,7 +142,7 @@ public class ExerciseEntry implements Parcelable {
         dest.writeInt(inputType);
         dest.writeString(activityType);
         dest.writeString(dateTime);
-        dest.writeInt(duration);
+        dest.writeDouble(duration);
         dest.writeDouble(distance);
         dest.writeDouble(avgPace);
         dest.writeDouble(avgSpeed);
@@ -170,7 +170,9 @@ public class ExerciseEntry implements Parcelable {
         return type.name() + ": " + activityType;
     }
     public String getStats(String unitPref) {
-        return convertFromKms(unitPref, distance) + " " + unitPref + ", " + duration + " mins";
+        String distanceString = String.format("%.2f", convertFromKms(unitPref, distance));
+        String durationString = String.format("%.1f", duration);
+        return distanceString + " " + unitPref + ", " + durationString + " mins";
     }
 
 }

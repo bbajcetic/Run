@@ -32,6 +32,8 @@ import static com.bbb.bbdev1.run.Utils.convertToKms;
 public class ManualEntryActivity extends AppCompatActivity implements View.OnClickListener, RunDialogFragment.OnDialogResponseListener {
     private ExerciseEntryDataSource dataSource;
     final String TAG = "RUN_TAG";
+    private SharedPreferences mPreferences;
+    String email;
 
     String activity;
     String date;
@@ -70,6 +72,9 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
         setSupportActionBar(toolbar);
         //enable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mPreferences = getSharedPreferences(SignInActivity.PROFILES_FILE, MODE_PRIVATE);
+        email = mPreferences.getString("SESSION_EMAIL", null);
+        assert(email != null); //have to have a valid session email, if not, sign user out (assert for now)
 
         dataSource = new ExerciseEntryDataSource(this);
         dataSource.open();
@@ -105,7 +110,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
     public void saveEntry() {
         ExerciseEntry.InputType inputTypeValue = Manual;
-        int durationValue = Integer.parseInt(duration);
+        double durationValue = Double.parseDouble(duration);
         double distanceValue = convertToKms(units, Double.parseDouble(distance));
         int caloriesValue = Integer.parseInt(calorie);
         int heartrateValue = Integer.parseInt(heartbeat);
@@ -115,7 +120,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
                 distanceValue, caloriesValue, heartrateValue, comment, privacyValue
                 );
         entry.setInputType(0);
-        dataSource.addExercise(entry);
+        dataSource.addExercise(entry, email);
     }
 
     void showDialog(RunDialogFragment.Type type) {
@@ -200,7 +205,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
 
                 return true;
             case R.id.action_delete:
-                dataSource.deleteExercise(entryId);
+                dataSource.deleteExercise(entryId, email);
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
                 Toast.makeText(this, "Entry deleted!", Toast.LENGTH_SHORT).show();
@@ -244,7 +249,7 @@ public class ManualEntryActivity extends AppCompatActivity implements View.OnCli
             String[] dateTime = entry.getDateTime().split(" ");
             date = dateTime[0];
             time = dateTime[1];
-            duration = Integer.toString(entry.getDuration());
+            duration = Double.toString(entry.getDuration());
             distance = Double.toString(convertFromKms(units, entry.getDistance()));
             calorie = Integer.toString(entry.getCalorie());
             heartbeat = Integer.toString(entry.getHeartRate());
