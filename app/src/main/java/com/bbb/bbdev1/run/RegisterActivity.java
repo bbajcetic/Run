@@ -123,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         handleIntent();
         setupFields();
-        
+
         if (existingUser) {
             emailField.setInputType(InputType.TYPE_NULL);
             emailField.setTextIsSelectable(false);
